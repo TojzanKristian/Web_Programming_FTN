@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<ArrayOfProizvod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Proizvod>
+    <Naziv>SAMSUNG TV</Naziv>
+    <Cena>150000</Cena>
+    <Kolicina>1</Kolicina>
+    <Opis>Skoro nov, minimalno korišćen.</Opis>
+    <Slika>Pictures\Samsung_tv.jpg</Slika>
+    <DatumPostavljanja>2021-06-13T00:00:00</DatumPostavljanja>
+    <Grad>Vrbas</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Dyson usisivač</Naziv>
+    <Cena>72000</Cena>
+    <Kolicina>3</Kolicina>
+    <Opis>Polovan, korišćen 2 godine, ali se za to vreme nije pokvario.</Opis>
+    <Slika>Pictures\Dyson-v11.jpg</Slika>
+    <DatumPostavljanja>2022-10-02T00:00:00</DatumPostavljanja>
+    <Grad>Niš</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Noževi</Naziv>
+    <Cena>1200</Cena>
+    <Kolicina>5</Kolicina>
+    <Opis>Cena celog seta je 5000din. Cena po komadu 1200din. U odličnom stanju su, naoštreni.</Opis>
+    <Slika>Pictures\Nozevi-set.jpg</Slika>
+    <DatumPostavljanja>2020-05-09T00:00:00</DatumPostavljanja>
+    <Grad>Sombor</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Lenovo laptop</Naziv>
+    <Cena>80000</Cena>
+    <Kolicina>1</Kolicina>
+    <Opis>Polovan. Cenu je moguće minimalno smanjiti po dogovoru.</Opis>
+    <Slika>Pictures\Lenovo-IdeaPad-5.jpg</Slika>
+    <DatumPostavljanja>2022-01-19T00:00:00</DatumPostavljanja>
+    <Grad>Novi Sad</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Caprilolo bicikli</Naziv>
+    <Cena>12000</Cena>
+    <Kolicina>1</Kolicina>
+    <Opis>Nov. Kupljen pre 3meseca postavljanja objave, korišćen samo jednom. Moguća zamena.</Opis>
+    <Slika>Pictures\Capriolo.jpg</Slika>
+    <DatumPostavljanja>2021-05-22T00:00:00</DatumPostavljanja>
+    <Grad>Apatin</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Iphone 5</Naziv>
+    <Cena>52000</Cena>
+    <Kolicina>1</Kolicina>
+    <Opis>Polovan. Moguća zamena za drugi telefon ili dogovor o menjanju za nešto drugo.</Opis>
+    <Slika>Pictures\Iphone5.jpg</Slika>
+    <DatumPostavljanja>2022-07-07T00:00:00</DatumPostavljanja>
+    <Grad>Subotica</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Tastatura</Naziv>
+    <Cena>2850</Cena>
+    <Kolicina>1</Kolicina>
+    <Opis>Marka : Teclado Gamer Hyperx Alloy Origins Core Aqua Preto. Polovan, ali u dobrom stanju.</Opis>
+    <Slika>Pictures\Tastatura.jpg</Slika>
+    <DatumPostavljanja>2021-10-17T00:00:00</DatumPostavljanja>
+    <Grad>Jagodina</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+  <Proizvod>
+    <Naziv>Mickey Mouse pliš igračka</Naziv>
+    <Cena>1590</Cena>
+    <Kolicina>2</Kolicina>
+    <Opis>Nov. Preporučen za decu stariju od 2 godine.</Opis>
+    <Slika>Pictures\Miki.jpg</Slika>
+    <DatumPostavljanja>2022-08-05T00:00:00</DatumPostavljanja>
+    <Grad>Bečej</Grad>
+    <Recenzije>
+      <Recenzija>
+        <Proizvod />
+        <Recenzent />
+        <Naslov />
+        <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+        <Slika />
+      </Recenzija>
+    </Recenzije>
+    <Dostupan>Da</Dostupan>
+  </Proizvod>
+</ArrayOfProizvod>

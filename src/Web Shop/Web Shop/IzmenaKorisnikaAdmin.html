@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Izmena korisnika admin</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width" />
+    <style>
+        body {
+            background-image: url("Pictures\\backgroundChange.jpg");
+            background-size: cover;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+    <script src="Scripts/code.jquery.com_jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#povratakBtn').click(function () {
+                window.location.href = "AdminPočetna.html";
+            });
+
+            $.ajax({
+                url: '/api/korisnici/preuzmiOznacenogKorisnika',
+                type: 'GET',
+                success: function (data) {
+                    $('#korisnickoIme').val(data.Data.KorisnickoIme);
+                    $('#lozinka').val(data.Data.Lozinka);
+                    $('#ime').val(data.Data.Ime);
+                    $('#prezime').val(data.Data.Prezime);
+                    $('#pol').val(data.Data.Pol);
+                    $('#email').val(data.Data.Email);
+                    let datum = new Date(data.Data.DatumRodjenja);
+                    let formattedDate = datum.toLocaleDateString('hu-HU');
+                    $('#datumRodjenja').val(formattedDate);
+                    if (data.Data.Uloga === 0)
+                        $('#uloge').val('Kupac');
+                    if (data.Data.Uloga === 1)
+                        $('#uloge').val('Prodavac');
+                },
+                error: function (xhr, status, error) {
+                    alert('Greška: ' + xhr.responseText);
+                }
+            });
+
+            $('#izmenaBtn').click(function () {
+                var kIme = $('#korisnickoIme').val();
+                var lozinka = $('#lozinka').val();
+                var ime = $('#ime').val();
+                var prezime = $('#prezime').val();
+                var pol = $('#pol').val();
+                var email = $('#email').val();
+                var datumR = $('#datumRodjenja').val();
+                var uloga = $('#uloge').val()
+                let brojac = 0;
+
+                if (kIme.length === 0) {
+                    alert('Korisničko ime mora biti popunjeno !');
+                    $('#korisnickoIme').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#korisnickoIme').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (lozinka.length === 0 || lozinka.length <= 5) {
+                    alert('Lozinka mora biti popunjena !');
+                    alert('Lozinka treba da sadrži najmanje 6 karaktera !');
+                    $('#lozinka').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#lozinka').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (ime.length === 0 || /\d/.test(ime)) {
+                    alert('Ime mora biti popunjeno !');
+                    alert('Ime ne sem sadržati brojeve !');
+                    $('#ime').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#ime').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (prezime.length === 0 || /\d/.test(prezime)) {
+                    alert('Prezime mora biti popunjeno !');
+                    alert('Prezime ne sem sadržati brojeve !');
+                    $('#prezime').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#prezime').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (pol.length === 0 || (pol != "muški" && pol != "ženski")) {
+                    alert('Pol mora biti popunjen !');
+                    alert('Pol može biti samo muški ili ženski !');
+                    $('#pol').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#pol').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (email.length === 0 || !email.includes("@")) {
+                    alert('Email mora biti popunjen !');
+                    alert('Email mora da sadrži "@" !');
+                    $('#email').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#email').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (datumR.length === 0) {
+                    alert('Morate odabrati datum rođenja !');
+                    $('#datumRodjenja').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#datumRodjenja').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (uloga.length === 0) {
+                    alert('Morate odabrati ulogu !');
+                    $('#uloge').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#uloge').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (brojac != 0) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/izmenaKodAdmina',
+                    type: 'PUT',
+                    data: JSON.stringify({ korisnickoIme: kIme, lozinka: lozinka, ime: ime, prezime: prezime, pol: pol, email: email, datumRodjenja: datumR, uloga: uloga }),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        alert('Uspešno ste izmenili podatke!');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form">
+            <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold; margin-top: 0;">Izmena korisnika
+            </h1>
+            <table>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Korisničko ime:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="korisnickoIme"
+                            name="korisnickoIme" maxlength="25" /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Lozinka:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="password" id="lozinka"
+                            name="lozinka" maxlength="18" /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Ime:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="ime" name="ime"
+                            maxlength="25" readonly /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Prezime:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="prezime"
+                            name="prezime" maxlength="25" /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Pol:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="pol" name="pol"
+                            maxlength="6" /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Email:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="email" name="email"
+                            maxlength="30" /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum rođenja:</td>
+                    <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="datumRodjenja"
+                            name="datumRodjenja" /></td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Uloga:</td>
+                    <td>
+                        <input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="uloge" name="uloge"
+                            readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="btn btn-outline-primary" id="izmenaBtn"
+                            style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                            value="Izmeni" />
+                    </td>
+                    <td>
+                        <input class="btn btn-outline-primary" id="povratakBtn"
+                            style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                            value="Povratak" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

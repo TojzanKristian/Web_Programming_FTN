@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+<ArrayOfKorisnik xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Korisnik>
+    <KorisnickoIme>nidžo</KorisnickoIme>
+    <Lozinka>n12345n6789</Lozinka>
+    <Ime>Nikola</Ime>
+    <Prezime>Nikolić</Prezime>
+    <Pol>muški</Pol>
+    <Email>nNesic@gamil.com</Email>
+    <DatumRodjenja>1999-03-13T00:00:00</DatumRodjenja>
+    <Uloga>Kupac</Uloga>
+    <Porudzbine>
+      <Porudzbina>
+        <Proizvod>
+          <Naziv>Dyson usisivač</Naziv>
+          <Cena>72000</Cena>
+          <Kolicina>3</Kolicina>
+          <Opis>Polovan, korišćen 2 godine, ali se za to vreme nije pokvario.</Opis>
+          <Slika>Pictures\Dyson-v11.jpg</Slika>
+          <DatumPostavljanja>2022-10-02T00:00:00</DatumPostavljanja>
+          <Grad>Niš</Grad>
+          <Recenzije>
+            <Recenzija>
+              <Proizvod />
+              <Recenzent />
+              <Naslov />
+              <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+              <Slika />
+            </Recenzija>
+          </Recenzije>
+          <Dostupan>Da</Dostupan>
+        </Proizvod>
+        <Kolicina>1</Kolicina>
+        <Kupac>nidžo</Kupac>
+        <DatumPorudzbine>2023-05-15T00:00:00</DatumPorudzbine>
+        <Status>AKTIVNA</Status>
+      </Porudzbina>
+    </Porudzbine>
+    <OmiljeniProizvodi>
+      <Proizvod>
+        <Naziv>SAMSUNG TV</Naziv>
+        <Cena>150000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Skoro nov, minimalno korišćen.</Opis>
+        <Slika>Pictures\Samsung_tv.jpg</Slika>
+        <DatumPostavljanja>2021-06-13T00:00:00</DatumPostavljanja>
+        <Grad>Vrbas</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+    </OmiljeniProizvodi>
+  </Korisnik>
+  <Korisnik>
+    <KorisnickoIme>ana42</KorisnickoIme>
+    <Lozinka>anaKraljica</Lozinka>
+    <Ime>Ana</Ime>
+    <Prezime>Anić</Prezime>
+    <Pol>ženski</Pol>
+    <Email>ana@gmail.com</Email>
+    <DatumRodjenja>2002-08-22T00:00:00</DatumRodjenja>
+    <Uloga>Kupac</Uloga>
+    <Porudzbine>
+      <Porudzbina>
+        <Proizvod>
+          <Naziv>Mickey Mouse pliš igračka</Naziv>
+          <Cena>1590</Cena>
+          <Kolicina>2</Kolicina>
+          <Opis>Nov. Preporučen za decu stariju od 2 godine.</Opis>
+          <Slika>Pictures\Miki.jpg</Slika>
+          <DatumPostavljanja>2022-08-05T00:00:00</DatumPostavljanja>
+          <Grad>Bečej</Grad>
+          <Recenzije>
+            <Recenzija>
+              <Proizvod />
+              <Recenzent />
+              <Naslov />
+              <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+              <Slika />
+            </Recenzija>
+          </Recenzije>
+          <Dostupan>Da</Dostupan>
+        </Proizvod>
+        <Kolicina>1</Kolicina>
+        <Kupac>ana42</Kupac>
+        <DatumPorudzbine>2023-05-25T00:00:00</DatumPorudzbine>
+        <Status>AKTIVNA</Status>
+      </Porudzbina>
+    </Porudzbine>
+    <OmiljeniProizvodi>
+      <Proizvod>
+        <Naziv>Lenovo laptop</Naziv>
+        <Cena>80000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Polovan. Cenu je moguće minimalno smanjiti po dogovoru.</Opis>
+        <Slika>Pictures\Lenovo-IdeaPad-5.jpg</Slika>
+        <DatumPostavljanja>2022-01-19T00:00:00</DatumPostavljanja>
+        <Grad>Novi Sad</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+    </OmiljeniProizvodi>
+  </Korisnik>
+  <Korisnik>
+    <KorisnickoIme>nemac</KorisnickoIme>
+    <Lozinka>123456</Lozinka>
+    <Ime>Nemanja</Ime>
+    <Prezime>Nešić</Prezime>
+    <Pol>muški</Pol>
+    <Email>nemac123@gmail.com</Email>
+    <DatumRodjenja>2001-11-05T00:00:00</DatumRodjenja>
+    <Uloga>Prodavac</Uloga>
+    <ObjavljeniProizvodi>
+      <Proizvod>
+        <Naziv>Dyson usisivač</Naziv>
+        <Cena>72000</Cena>
+        <Kolicina>3</Kolicina>
+        <Opis>Polovan, korišćen 2 godine, ali se za to vreme nije pokvario.</Opis>
+        <Slika>Pictures\Dyson-v11.jpg</Slika>
+        <DatumPostavljanja>2022-10-02T00:00:00</DatumPostavljanja>
+        <Grad>Niš</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+      <Proizvod>
+        <Naziv>Lenovo laptop</Naziv>
+        <Cena>80000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Polovan. Cenu je moguće minimalno smanjiti po dogovoru.</Opis>
+        <Slika>Pictures\Lenovo-IdeaPad-5.jpg</Slika>
+        <DatumPostavljanja>2022-01-19T00:00:00</DatumPostavljanja>
+        <Grad>Novi Sad</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+    </ObjavljeniProizvodi>
+  </Korisnik>
+  <Korisnik>
+    <KorisnickoIme>mici</KorisnickoIme>
+    <Lozinka>987456</Lozinka>
+    <Ime>Milica</Ime>
+    <Prezime>Micić</Prezime>
+    <Pol>ženski</Pol>
+    <Email>mm00@gmail.com</Email>
+    <DatumRodjenja>2000-05-15T00:00:00</DatumRodjenja>
+    <Uloga>Prodavac</Uloga>
+    <ObjavljeniProizvodi>
+      <Proizvod>
+        <Naziv>SAMSUNG TV</Naziv>
+        <Cena>150000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Skoro nov, minimalno korišćen.</Opis>
+        <Slika>Pictures\Samsung_tv.jpg</Slika>
+        <DatumPostavljanja>2021-06-13T00:00:00</DatumPostavljanja>
+        <Grad>Vrbas</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+      <Proizvod>
+        <Naziv>Mickey Mouse pliš igračka</Naziv>
+        <Cena>1590</Cena>
+        <Kolicina>2</Kolicina>
+        <Opis>Nov. Preporučen za decu stariju od 2 godine.</Opis>
+        <Slika>Pictures\Miki.jpg</Slika>
+        <DatumPostavljanja>2022-08-05T00:00:00</DatumPostavljanja>
+        <Grad>Bečej</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+      <Proizvod>
+        <Naziv>Iphone 5</Naziv>
+        <Cena>52000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Polovan. Moguća zamena za drugi telefon ili dogovor o menjanju za nešto drugo.</Opis>
+        <Slika>Pictures\Iphone5.jpg</Slika>
+        <DatumPostavljanja>2022-07-07T00:00:00</DatumPostavljanja>
+        <Grad>Subotica</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+    </ObjavljeniProizvodi>
+  </Korisnik>
+  <Korisnik>
+    <KorisnickoIme>marko_kraljina</KorisnickoIme>
+    <Lozinka>m&amp;m666</Lozinka>
+    <Ime>Marko</Ime>
+    <Prezime>Marković</Prezime>
+    <Pol>muški</Pol>
+    <Email>marko33@gmail.com</Email>
+    <DatumRodjenja>1998-08-01T00:00:00</DatumRodjenja>
+    <Uloga>Kupac</Uloga>
+    <Porudzbine>
+      <Porudzbina>
+        <Proizvod>
+          <Naziv>Caprilolo bicikli</Naziv>
+          <Cena>12000</Cena>
+          <Kolicina>1</Kolicina>
+          <Opis>Nov. Kupljen pre 3meseca postavljanja objave, korišćen samo jednom. Moguća zamena.</Opis>
+          <Slika>Pictures\Capriolo.jpg</Slika>
+          <DatumPostavljanja>2021-05-22T00:00:00</DatumPostavljanja>
+          <Grad>Apatin</Grad>
+          <Recenzije>
+            <Recenzija>
+              <Proizvod />
+              <Recenzent />
+              <Naslov />
+              <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+              <Slika />
+            </Recenzija>
+          </Recenzije>
+          <Dostupan>Da</Dostupan>
+        </Proizvod>
+        <Kolicina>1</Kolicina>
+        <Kupac>marko_kraljina</Kupac>
+        <DatumPorudzbine>2023-06-16T00:00:00</DatumPorudzbine>
+        <Status>AKTIVNA</Status>
+      </Porudzbina>
+    </Porudzbine>
+    <OmiljeniProizvodi>
+      <Proizvod>
+        <Naziv>Iphone 5</Naziv>
+        <Cena>52000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Polovan. Moguća zamena za drugi telefon ili dogovor o menjanju za nešto drugo.</Opis>
+        <Slika>Pictures\Iphone5.jpg</Slika>
+        <DatumPostavljanja>2022-07-07T00:00:00</DatumPostavljanja>
+        <Grad>Subotica</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+    </OmiljeniProizvodi>
+  </Korisnik>
+  <Korisnik>
+    <KorisnickoIme>anjica</KorisnickoIme>
+    <Lozinka>123anja</Lozinka>
+    <Ime>Anja</Ime>
+    <Prezime>Lalović</Prezime>
+    <Pol>ženski</Pol>
+    <Email>anja@gmail.com</Email>
+    <DatumRodjenja>2002-12-21T00:00:00</DatumRodjenja>
+    <Uloga>Prodavac</Uloga>
+    <ObjavljeniProizvodi>
+      <Proizvod>
+        <Naziv>Noževi</Naziv>
+        <Cena>1200</Cena>
+        <Kolicina>5</Kolicina>
+        <Opis>Cena celog seta je 5000din. Cena po komadu 1200din. U odličnom stanju su, naoštreni.</Opis>
+        <Slika>Pictures\Nozevi-set.jpg</Slika>
+        <DatumPostavljanja>2020-05-09T00:00:00</DatumPostavljanja>
+        <Grad>Sombor</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+      <Proizvod>
+        <Naziv>Caprilolo bicikli</Naziv>
+        <Cena>12000</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Nov. Kupljen pre 3meseca postavljanja objave, korišćen samo jednom. Moguća zamena.</Opis>
+        <Slika>Pictures\Capriolo.jpg</Slika>
+        <DatumPostavljanja>2021-05-22T00:00:00</DatumPostavljanja>
+        <Grad>Apatin</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+      <Proizvod>
+        <Naziv>Tastatura</Naziv>
+        <Cena>2850</Cena>
+        <Kolicina>1</Kolicina>
+        <Opis>Marka : Teclado Gamer Hyperx Alloy Origins Core Aqua Preto. Polovan, ali u dobrom stanju.</Opis>
+        <Slika>Pictures\Tastatura.jpg</Slika>
+        <DatumPostavljanja>2021-10-17T00:00:00</DatumPostavljanja>
+        <Grad>Jagodina</Grad>
+        <Recenzije>
+          <Recenzija>
+            <Proizvod />
+            <Recenzent />
+            <Naslov />
+            <SadrzajRecenzije>Nema recenzije!</SadrzajRecenzije>
+            <Slika />
+          </Recenzija>
+        </Recenzije>
+        <Dostupan>Da</Dostupan>
+      </Proizvod>
+    </ObjavljeniProizvodi>
+  </Korisnik>
+</ArrayOfKorisnik>

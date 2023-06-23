@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-image: url("Pictures\\backgroundChange.jpg");
+            background-size: cover;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+    <script src="Scripts/code.jquery.com_jquery-3.6.0.min.js"></script>
+    <title>Izmena recenzije</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#nazadBtn').click(function () {
+                window.location.href = "KupacPočetna.html";
+            });
+
+            $.ajax({
+                url: '/api/korisnici/preuzmiRecenziju',
+                type: 'GET',
+                success: function (data) {
+                    $('#naslov').val(data.Data.Naslov);
+                    $('#opis').val(data.Data.SadrzajRecenzije);
+                },
+                error: function (xhr, status, error) {
+                    alert('Greška: ' + xhr.responseText);
+                }
+            });
+
+            $(document).on('click', '#izmenaBtn', function () {
+                let naslov = $('#naslov').val();
+                let opis = $('#opis').val();
+
+                if (naslov.length === 0) {
+                    alert('Naslov recenzije mora biti popunjena !');
+                    $('#naslov').css({ "border-color": "red", "border-width": "3px" });
+                }
+                else {
+                    $('#naslov').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (opis.length === 0) {
+                    alert('Opis recenzije mora biti popunjen !');
+                    $('#opis').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#opis').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/izmenaRecenzije',
+                    type: 'PUT',
+                    data: JSON.stringify({ naslov: naslov, opis: opis }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste izmenili recenziju !');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form">
+            <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold; margin-top: 0;">Izmena recenzije
+            </h1>
+            <table>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naslov recenzije:</td>
+                    <td>
+                        <input id="naslov" name="naslov" style="font-family: 'Arial', sans-serif; color: blue"
+                            type="text" value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Opis recenzije:</td>
+                    <td>
+                        <textarea
+                            style="font-family: 'Arial', sans-serif; color: blue; resize: none; width: 200px; height: 100px;"
+                            id="opis" name="opis"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="btn btn-outline-primary" id="izmenaBtn"
+                            style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                            value="Izmena recenzije" />
+                    </td>
+                    <td>
+                        <input class="btn btn-outline-primary" id="nazadBtn"
+                            style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                            value="Povratak" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

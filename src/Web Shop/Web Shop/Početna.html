@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Početna stranica</title>
+    <meta name="viewport" content="width=device-width" charset="utf-8" />
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+    <script src="Scripts/code.jquery.com_jquery-3.6.0.min.js"></script>
+    <style>
+        .product-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .product-table th,
+        .product-table td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        .image-container {
+            position: fixed;
+            top: 40px;
+            right: 0;
+        }
+
+        .nav-link[href=""] {
+            display: none;
+        }
+    </style>
+    <script src="Scripts/nav.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#imgClick').click(function () {
+                window.location.href = "KorisničkaStranica.html";
+            });
+
+            $.ajax({
+                url: "/api/proizvodi",
+                type: "GET",
+                success: function (data, status) {
+                    let tableOfProducts = "<table class='product-table'>";
+                    tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+                    for (let product in data) {
+                        let datumPostavljanja = new Date(data[product].DatumPostavljanja);
+                        let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                        tableOfProducts += `<tr><td><img alt="" src="${data[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Opis}</td><td>${formattedDate}</td><td>${data[product].Grad}</td><td>${data[product].Dostupan}</td></tr>`;
+                    }
+                    tableOfProducts += "</table>";
+                    $("#content").html(tableOfProducts);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert("Greška: " + xhr.status);
+                }
+            });
+
+            $(document).on('click', '#searchButton', function () {
+                let naziv = $('#naziv').val();
+                let grad = $('#grad').val();
+                let minCena = $('#minCena').val();
+                let maxCena = $('#maxCena').val();
+
+                if (naziv.length === 0 && grad.length === 0 && minCena.length === 0 && maxCena.length === 0) {
+                    alert('Greška - Pupunite polje/a za naziv ili grad ili cenu !!');
+                    $('#naziv').css({ "border-color": "red", "border-width": "3px" });
+                    $('#grad').css({ "border-color": "red", "border-width": "3px" });
+                    $('#minCena').css({ "border-color": "red", "border-width": "3px" });
+                    $('#maxCena').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#naziv').css({ "border-color": "black", "border-width": "1px" });
+                    $('#grad').css({ "border-color": "black", "border-width": "1px" });
+                    $('#minCena').css({ "border-color": "black", "border-width": "1px" });
+                    $('#maxCena').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                $.ajax({
+                    url: '/api/proizvodi/search',
+                    type: 'GET',
+                    data: { naziv: naziv, grad: grad, minCena: minCena, maxCena: maxCena },
+                    success: function (result) {
+                        let tableOfProducts = "<table class='product-table''>";
+                        tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+                        for (product in result) {
+                            let datumPostavljanja = new Date(result[product].DatumPostavljanja);
+                            let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                            tableOfProducts += `<tr><td><img alt="" src="${result[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${result[product].Naziv}</td><td>${result[product].Cena}</td><td>${result[product].Kolicina}</td><td>${result[product].Opis}</td><td>${formattedDate}</td><td>${result[product].Grad}</td><td>${result[product].Dostupan}</td></tr>`;
+                        }
+                        tableOfProducts += "</table>";
+                        $("#content").html(tableOfProducts);
+                        $('#naziv').val('');
+                        $('#grad').val('');
+                        $('#minCena').val('');
+                        $('#maxCena').val('');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.status);
+                    }
+                });
+            });
+
+            $(document).on('click', '#sortButton', function () {
+                let sortN = $('#tipSortNaziv').val();
+                let sortC = $('#tipSortCena').val();
+                let sortD = $('#tipSortDatum').val();
+
+                if (sortN.length === 0 && sortC.length === 0 && sortD.length === 0) {
+                    alert('Greška - Označite tip sortiranja za jedno polje !!');
+                    $('#tipSortNaziv').css({ "border-color": "red", "border-width": "3px" });
+                    $('#tipSortCena').css({ "border-color": "red", "border-width": "3px" });
+                    $('#tipSortDatum').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#tipSortNaziv').css({ "border-color": "black", "border-width": "1px" });
+                    $('#tipSortCena').css({ "border-color": "black", "border-width": "1px" });
+                    $('#tipSortDatum').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                if ((sortN.length !== 0 ? 1 : 0) + (sortC.length !== 0 ? 1 : 0) + (sortD.length !== 0 ? 1 : 0) > 1) {
+                    alert('Greška - Označite tip sortiranja samo za jedno polje !!');
+                    $('#tipSortNaziv').prop('selectedIndex', 0);
+                    $('#tipSortCena').prop('selectedIndex', 0);
+                    $('#tipSortDatum').prop('selectedIndex', 0);
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/proizvodi/sort',
+                    type: 'GET',
+                    data: { sortN: sortN, sortC: sortC, sortD: sortD },
+                    success: function (res) {
+                        let tableOfProducts = "<table class='product-table''>";
+                        tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+                        for (product in res) {
+                            let datumPostavljanja = new Date(res[product].DatumPostavljanja);
+                            let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                            tableOfProducts += `<tr><td><img alt="" src="${res[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${res[product].Naziv}</td><td>${res[product].Cena}</td><td>${res[product].Kolicina}</td><td>${res[product].Opis}</td><td>${formattedDate}</td><td>${res[product].Grad}</td><td>${res[product].Dostupan}</td></tr>`;
+                        }
+                        tableOfProducts += "</table>";
+                        $("#content").html(tableOfProducts);
+                        $('#tipSortNaziv').prop('selectedIndex', 0);
+                        $('#tipSortCena').prop('selectedIndex', 0);
+                        $('#tipSortDatum').prop('selectedIndex', 0);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.status);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="Početna.html">Početna</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Prijava.html">Prijava</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Registracija.html">Registracija</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="prikazLink" href="">Uloga</a>
+        </li>
+    </ul>
+    <h1 style="position: relative; top: 20px; left: 0; font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Prikaz svih dostupnih proizvoda :</h1>
+    <div class="image-container">
+        <img id="imgClick" alt="" style="max-width: 60px; max-height: 60px; cursor: pointer;"
+            src="Pictures\\Profile-Place-Holder.jpg">
+    </div>
+    <br />
+    <div id="content"></div>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Pretraga</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naziv proizvoda:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="naziv" name="naziv"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Grad:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="grad" name="grad"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Minimalna cena:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="number" id="minCena" name="minCena"
+                    maxlength="25" /></td>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Maksimalna cena:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="number" id="maxCena" name="maxCena"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="searchButton"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Pretraži" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Sortiranje</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naziv proizvoda:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortNaziv" name="tipSortNaziv">
+                    <option> </option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Cena proizvoda:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortCena" name="tipSortCena">
+                    <option> </option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum postavljanja:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortDatum" name="tipSortDatum">
+                    <option></option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="sortButton"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Sortiraj" />
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

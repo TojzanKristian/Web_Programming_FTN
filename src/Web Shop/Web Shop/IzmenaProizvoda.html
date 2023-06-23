@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-image: url("Pictures\\backgroundChange.jpg");
+            background-size: cover;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+    <script src="Scripts/code.jquery.com_jquery-3.6.0.min.js"></script>
+    <title>Izmena proizvoda</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#nazadBtn').click(function () {
+                window.location.href = "ProdavacPočetna.html";
+            });
+
+            $.ajax({
+                url: '/api/korisnici/preuzmiIzmenu',
+                type: 'GET',
+                success: function (data) {
+                    $('#naziv').val(data.Data.Naziv);
+                    $('#cena').val(data.Data.Cena);
+                    $('#kolicina').val(data.Data.Kolicina);
+                    $('#opis').val(data.Data.Opis);
+                    $('#grad').val(data.Data.Grad);
+                    let datum = new Date(data.Data.DatumPostavljanja);
+                    let formattedDate = datum.toLocaleDateString('hu-HU');
+                    $('#datum').val(formattedDate);
+                    if (data.Data.Dostupan === "Da")
+                        $('#tip option[value="da"]').prop('selected', true);
+                    if (data.Data.Dostupan === "Ne")
+                        $('#tip option[value="ne"]').prop('selected', true);
+                    $('#slika').val('');
+                },
+                error: function (xhr, status, error) {
+                    alert('Greška: ' + xhr.responseText);
+                }
+            });
+
+            $(document).on('click', '#izmenaBtn', function () {
+                let naziv = $('#naziv').val();
+                let cena = $('#cena').val();
+                let kolicina = $('#kolicina').val();
+                let opis = $('#opis').val();
+                let datum = $('#datum').val();
+                let grad = $('#grad').val();
+                let dostupan = $('#tip').val();
+                let slika = $('#slika').val();
+                let brojac = 0;
+
+                if (naziv.length === 0) {
+                    alert('Naziv proizvoda mora biti popunjen !');
+                    $('#naziv').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#naziv').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (cena.length === 0) {
+                    alert('Cena proizvoda mora biti popunjena !');
+                    $('#cena').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#cena').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (kolicina.length === 0) {
+                    alert('Kolicina proizvoda mora biti popunjena !');
+                    $('#kolicina').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#kolicina').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (opis.length === 0) {
+                    alert('Opis proizvoda mora biti popunjen !');
+                    $('#opis').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#opis').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (datum.length === 0) {
+                    alert('Datum dodavanja mora biti popunjen !');
+                    $('#datum').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#datum').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (grad.length === 0) {
+                    alert('Grad mora biti popunjen !');
+                    $('#grad').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#grad').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (dostupan.length === 0) {
+                    alert('Morate odabrati opciju za dostupnost !');
+                    $('#tip').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#tip').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (slika.length === 0) {
+                    alert('Morate odabrati sliku proizvoda!');
+                    $('#slika').after('<span style="color: red;">  Niste odabrali silku!!</span>');
+                    brojac += 1
+                }
+                else {
+                    $('#slika').next('span').remove();
+                    $('#slika').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (brojac != 0) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/Izmena',
+                    type: 'PUT',
+                    data: JSON.stringify({ 'naziv': naziv, 'cena': cena, 'kolicina': kolicina, 'opis': opis, 'datumPostavljanja': datum, 'grad': grad, 'slika': slika, 'dostupan': dostupan }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste izmenili proizvod !');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form">
+            <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Izmena proizvoda</h1>
+            <table>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naziv proizvoda:</td>
+                    <td>
+                        <input id="naziv" name="naziv" style="font-family: 'Arial', sans-serif; color: blue" type="text"
+                            value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Cena proizvoda:</td>
+                    <td>
+                        <input id="cena" name="cena" style="font-family: 'Arial', sans-serif; color: blue" type="number"
+                            value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Količina:</td>
+                    <td>
+                        <input id="kolicina" name="kolicina" style="font-family: 'Arial', sans-serif; color: blue"
+                            type="number" value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Opis:</td>
+                    <td>
+                        <textarea
+                            style="font-family: 'Arial', sans-serif; color: blue; resize: none; width: 200px; height: 100px;"
+                            id="opis" name="opis"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum postavljanja:</td>
+                    <td>
+                        <input id="datum" name="datum" style="font-family: 'Arial', sans-serif; color: blue" type="text"
+                            value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Grad:</td>
+                    <td>
+                        <input id="grad" name="grad" style="font-family: 'Arial', sans-serif; color: blue" type="text"
+                            value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Dostupan?</td>
+                    <td>
+                        <select style="font-family: 'Arial', sans-serif; color: blue" id="tip" name="tip">
+                            <option></option>
+                            <option style="font-family: 'Arial', sans-serif; color: blue" value="da">Da</option>
+                            <option style="font-family: 'Arial', sans-serif; color: blue" value="ne">Ne</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Slika proizvoda:</td>
+                    <td>
+                        <input type="file" id="slika" name="slika">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="btn btn-outline-primary" id="izmenaBtn"
+                            style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                            value="Izmena proizvoda" />
+                    </td>
+                    <td>
+                        <input class="btn btn-outline-primary" id="nazadBtn"
+                            style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                            value="Povratak" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

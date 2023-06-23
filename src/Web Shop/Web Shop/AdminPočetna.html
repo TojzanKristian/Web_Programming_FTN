@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+    <script src="Scripts/code.jquery.com_jquery-3.6.0.min.js"></script>
+    <title>Admin</title>
+    <style>
+        .product-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .product-table th,
+        .product-table td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        .image-container {
+            position: fixed;
+            top: 40px;
+            right: 0;
+        }
+
+        .btn-container {
+            position: fixed;
+            top: 105px;
+            right: 0;
+        }
+    </style>
+    <script src="Scripts/nav.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#imgClick').click(function () {
+                window.location.href = "KorisničkaStranica.html";
+            });
+
+            $.ajax({
+                url: "/api/korisnici",
+                type: "GET",
+                success: function (data) {
+                    IspisKorisnika(data);
+                },
+                error: function (xhr, status, error) {
+                    alert("Hiba történt a kérés során: " + error);
+                }
+            });
+
+            $.ajax({
+                url: "/api/proizvodi",
+                type: "GET",
+                success: function (data) {
+                    IspisSvihProizvoda(data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Hiba történt: " + error);
+                }
+            });
+
+            $.ajax({
+                url: '/api/korisnici/sveporudzbine',
+                type: 'GET',
+                success: function (data) {
+                    IspisPorudzbina(data.Data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Greška: ' + xhr.status);
+                }
+            });
+
+            $(document).on('click', '#odjavaBtn', function () {
+                alert('Odjavili ste se ! Otvara vam se početna stranica...');
+
+                $.ajax({
+                    url: '/api/korisnici/odjava',
+                    type: 'POST',
+                    success: function (data) {
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+                window.location.href = "Početna.html";
+            });
+
+            $(document).on('click', '#searchButton', function () {
+                let ime = $('#ime').val();
+                let prezime = $('#prezime').val();
+                let datumR = $('#datumR').val();
+                let uloge = $('#uloge').val();
+
+                if (ime.length === 0) {
+                    ime = ""
+                }
+                if (prezime.length === 0) {
+                    prezime = ""
+                }
+                if (datumR.length === 0) {
+                    datumR = ""
+                }
+                if (uloge.length === 0) {
+                    uloge = ""
+                }
+
+                if (ime.length === 0 && prezime.length === 0 && datumR.length === 0 && uloge.length === 0) {
+                    alert('Greška - Pupunite polje/a za naziv ili grad ili cenu !!');
+                    $('#ime').css({ "border-color": "red", "border-width": "3px" });
+                    $('#prezime').css({ "border-color": "red", "border-width": "3px" });
+                    $('#datumR').css({ "border-color": "red", "border-width": "3px" });
+                    $('#uloge').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#ime').css({ "border-color": "black", "border-width": "1px" });
+                    $('#prezime').css({ "border-color": "black", "border-width": "1px" });
+                    $('#datumR').css({ "border-color": "black", "border-width": "1px" });
+                    $('#uloge').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/admin/search',
+                    type: 'GET',
+                    data: { ime: ime, prezime: prezime, datumR: datumR, uloge: uloge },
+                    success: function (result) {
+                        IspisKorisnika(result);
+
+                        $('#ime').val('');
+                        $('#prezime').val('');
+                        $('#datumR').val('');
+                        $('#uloge').prop('selectedIndex', 0);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.status);
+                        $('#ime').val('');
+                        $('#prezime').val('');
+                        $('#datumR').val('');
+                        $('#uloge').prop('selectedIndex', 0);
+                    }
+                });
+            });
+
+            $(document).on('click', '#sortButton', function () {
+                let imeSort = $('#tipSortIme').val();
+                let datumSort = $('#tipSortDatum').val();
+                let ulogeSort = $('#tipSortUloga').val();
+
+                if (imeSort.length === 0 && datumSort.length === 0 && ulogeSort.length === 0) {
+                    alert('Greška - Označite tip sortiranja za jedno polje !!');
+                    $('#tipSortIme').css({ "border-color": "red", "border-width": "3px" });
+                    $('#tipSortDatum').css({ "border-color": "red", "border-width": "3px" });
+                    $('#tipSortUloga').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#tipSortIme').css({ "border-color": "black", "border-width": "1px" });
+                    $('#tipSortDatum').css({ "border-color": "black", "border-width": "1px" });
+                    $('#tipSortUloga').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                if ((imeSort.length !== 0 ? 1 : 0) + (datumSort.length !== 0 ? 1 : 0) + (ulogeSort.length !== 0 ? 1 : 0) > 1) {
+                    alert('Greška - Označite tip sortiranja samo za jedno polje !!');
+                    $('#tipSortIme').prop('selectedIndex', 0);
+                    $('#tipSortDatum').prop('selectedIndex', 0);
+                    $('#tipSortUloga').prop('selectedIndex', 0);
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/admin/sort',
+                    type: 'GET',
+                    data: { imeSort: imeSort, datumSort: datumSort, ulogeSort: ulogeSort },
+                    success: function (res) {
+                        IspisKorisnika(res);
+
+                        $('#tipSortIme').prop('selectedIndex', 0);
+                        $('#tipSortDatum').prop('selectedIndex', 0);
+                        $('#tipSortUloga').prop('selectedIndex', 0);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.status);
+                        $('#tipSortIme').prop('selectedIndex', 0);
+                        $('#tipSortDatum').prop('selectedIndex', 0);
+                        $('#tipSortUloga').prop('selectedIndex', 0);
+                    }
+                });
+            });
+
+            $(document).on('click', '#pretragaProizvod', function () {
+                let status = $('#status').val();
+
+                if (status.length === 0) {
+                    alert('Greška - Morate odabrati opciju za dostupnost !!');
+                    $('#status').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#status').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/admin/proizvodi/pretraga',
+                    type: 'GET',
+                    data: { status: status },
+                    success: function (result) {
+                        IspisSvihProizvoda(result);
+
+                        $('#status').prop('selectedIndex', 0);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.status);
+                        $('#status').prop('selectedIndex', 0);
+                    }
+                });
+            });
+
+            $(document).on('click', '#sortiranjeProizvoda', function () {
+                let nazivSort = $('#tipSortNaziv').val();
+                let cenaSort = $('#tipSortCena').val();
+                let datumPSort = $('#tipSortDatumP').val();
+
+                if (nazivSort.length === 0 && cenaSort.length === 0 && datumPSort.length === 0) {
+                    alert('Greška - Označite tip sortiranja za jedno polje !!');
+                    $('#tipSortNaziv').css({ "border-color": "red", "border-width": "3px" });
+                    $('#tipSortCena').css({ "border-color": "red", "border-width": "3px" });
+                    $('#tipSortDatumP').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#tipSortNaziv').css({ "border-color": "black", "border-width": "1px" });
+                    $('#tipSortCena').css({ "border-color": "black", "border-width": "1px" });
+                    $('#tipSortDatumP').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                if ((nazivSort.length !== 0 ? 1 : 0) + (cenaSort.length !== 0 ? 1 : 0) + (datumPSort.length !== 0 ? 1 : 0) > 1) {
+                    alert('Greška - Označite tip sortiranja samo za jedno polje !!');
+                    $('#tipSortNaziv').prop('selectedIndex', 0);
+                    $('#tipSortCena').prop('selectedIndex', 0);
+                    $('#tipSortDatumP').prop('selectedIndex', 0);
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/admin/proizvodi/sort',
+                    type: 'GET',
+                    data: { nazivSort: nazivSort, cenaSort: cenaSort, datumPSort: datumPSort },
+                    success: function (res) {
+                        IspisSvihProizvoda(res);
+                        $('#tipSortNaziv').prop('selectedIndex', 0);
+                        $('#tipSortCena').prop('selectedIndex', 0);
+                        $('#tipSortDatumP').prop('selectedIndex', 0);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.status);
+                        $('#tipSortNaziv').prop('selectedIndex', 0);
+                        $('#tipSortCena').prop('selectedIndex', 0);
+                        $('#tipSortDatumP').prop('selectedIndex', 0);
+                    }
+                });
+            });
+
+            $(document).on('click', '.izmeniBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/pripremaZaIzmenu',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        window.location.href = "IzmenaProizvodaAdmin.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.obrisiBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/brisanjeProizvodaAdmin',
+                    type: 'DELETE',
+                    data: { 'naziv': naziv },
+                    success: function (data) {
+                        alert('Proizvod ste uspešno obrisali !');
+                        window.location.href = "AdminPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.izvrsiBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/statusIzvrsen',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste izmenili status !!');
+                        window.location.href = "AdminPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.otkaziBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/statusOtkazan',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste izmenili status !!');
+                        window.location.href = "AdminPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $('#dodajProdavcaBtn').click(function () {
+                let kIme = $('#korisnickoIme').val();
+                let lozinka = $('#lozinka').val();
+                let ime = $('#imeD').val();
+                let prezime = $('#prezimeD').val();
+                let pol = $('#pol').val();
+                let email = $('#email').val();
+                let datumR = $('#datumRodjenja').val();
+                let uloga = $('#ulogeD').val();
+                let brojac = 0;
+
+                if (kIme.length === 0) {
+                    alert('Korisničko ime mora biti popunjeno !');
+                    $('#korisnickoIme').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#korisnickoIme').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (lozinka.length === 0 || lozinka.length <= 5) {
+                    alert('Lozinka mora biti popunjena !');
+                    alert('Lozinka treba da sadrži najmanje 6 karaktera !');
+                    $('#lozinka').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#lozinka').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (ime.length === 0 || /\d/.test(ime)) {
+                    alert('Ime mora biti popunjeno !');
+                    alert('Ime ne sem sadržati brojeve !');
+                    $('#imeD').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#imeD').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (prezime.length === 0 || /\d/.test(prezime)) {
+                    alert('Prezime mora biti popunjeno !');
+                    alert('Prezime ne sem sadržati brojeve !');
+                    $('#prezimeD').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#prezimeD').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (pol.length === 0 || (pol != "muški" && pol != "ženski")) {
+                    alert('Pol mora biti popunjen !');
+                    alert('Pol može biti samo muški ili ženski !');
+                    $('#pol').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#pol').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (email.length === 0 || !email.includes("@")) {
+                    alert('Email mora biti popunjen !');
+                    alert('Email mora da sadrži "@" !');
+                    $('#email').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#email').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (datumR.length === 0) {
+                    alert('Morate odabrati datum rođenja !');
+                    $('#datumRodjenja').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#datumRodjenja').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (uloga.length === 0) {
+                    alert('Morate odabrati ulogu !');
+                    $('#ulogeD').css({ "border-color": "red", "border-width": "3px" });
+                    brojac += 1
+                }
+                else {
+                    $('#ulogeD').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (brojac != 0) {
+                    return;
+                }
+
+                $.ajax({
+                    url: "/api/korisnici/dodatProdavac",
+                    type: "POST",
+                    data: JSON.stringify({ korisnickoIme: kIme, lozinka: lozinka, ime: ime, prezime: prezime, pol: pol, email: email, datumRodjenja: datumR, uloga: uloga }),
+                    contentType: "application/json",
+                    success: function (result) {
+                        alert("Uspešno je dodat prodavac !!");
+                        $('#korisnickoIme').val('');
+                        $('#lozinka').val('');
+                        $('#imeD').val('');
+                        $('#prezimeD').val('');
+                        $('#pol').val('');
+                        $('#email').val('');
+                        $('#datumRodjenja').val('');
+                        $('#ulogeD').prop('selectedIndex', 0);
+                        IspisKorisnika(result);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert("Greška: " + xhr.responseText);
+                        $('#korisnickoIme').val('');
+                        $('#lozinka').val('');
+                        $('#imeD').val('');
+                        $('#prezimeD').val('');
+                        $('#pol').val('');
+                        $('#email').val('');
+                        $('#datumRodjenja').val('');
+                        $('#ulogeD').prop('selectedIndex', 0);
+                    }
+                });
+            });
+
+            $(document).on('click', '.izmeniKorisnikBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/pripremaZaIzmenu',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        window.location.href = "IzmenaKorisnikaAdmin.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.obrisiKorisnikBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/brisanjeKorisnikaAdmin',
+                    type: 'DELETE',
+                    data: { 'naziv': naziv },
+                    success: function (data) {
+                        alert('Uspešno ste obrisali korisnika !!');
+                        window.location.href = "AdminPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            function IspisKorisnika(data) {
+                let tabelaKorisnika = "<table class='product-table'>";
+                tabelaKorisnika += '<tr><th>Korisničko ime</th><th>Lozinka</th><th>Ime</th><th>Prezime</th><th>Pol</th><th>Email</th><th>Datum rođenja</th><th>Uloga</th><th>Izmena</th><th>Brisanje</th></tr>';
+
+                for (k in data) {
+                    let datum = new Date(data[k].DatumRodjenja);
+                    let formattedDate = datum.toLocaleDateString('hu-HU');
+                    let pom = data[k].Uloga;
+                    let uloga;
+
+                    if (pom === 0) {
+                        uloga = "Kupac";
+                    }
+                    if (pom === 1) {
+                        uloga = "Prodavac";
+                    }
+                    tabelaKorisnika += `<tr><td>${data[k].KorisnickoIme}</td><td>${data[k].Lozinka}</td><td>${data[k].Ime}</td><td>${data[k].Prezime}</td><td>${data[k].Pol}</td><td>${data[k].Email}</td><td>${formattedDate}</td><td>${uloga}</td><td style="text-align: center;"><button class="izmeniKorisnikBtn" name="${data[k].Ime}" style="margin: 0 auto;">Izmeni</button></td><td style="text-align: center;"><button class="obrisiKorisnikBtn" name="${data[k].Ime}" style="margin: 0 auto;">Obriši</button></td></tr>`;
+                }
+                tabelaKorisnika += "</table>";
+                $("#contentKorisnici").html(tabelaKorisnika);
+            }
+
+            function IspisSvihProizvoda(data) {
+                let tabelaProizvoda = "<table class='product-table'>";
+                tabelaProizvoda += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th><th>Izmena</th><th>Brisanje</th></tr>';
+
+                for (let proizvod in data) {
+                    let datumPostavljanja = new Date(data[proizvod].DatumPostavljanja);
+                    let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                    tabelaProizvoda += `<tr><td><img alt="" src="${data[proizvod].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[proizvod].Naziv}</td><td>${data[proizvod].Cena}</td><td>${data[proizvod].Kolicina}</td><td>${data[proizvod].Opis}</td><td>${formattedDate}</td><td>${data[proizvod].Grad}</td><td>${data[proizvod].Dostupan}</td><td style="text-align: center;"><button class="izmeniBtn" name="${data[proizvod].Naziv}" style="margin: 0 auto;">Izmeni</button></td><td style="text-align: center;"><button class="obrisiBtn" name="${data[proizvod].Naziv}" style="margin: 0 auto;">Obriši</button></td></tr>`;
+                }
+                tabelaProizvoda += "</table>";
+                $("#contentProizvodi").html(tabelaProizvoda);
+            }
+
+            function IspisPorudzbina(data) {
+                let tabelaPorudzbina = "<table class='product-table'>";
+                tabelaPorudzbina += '<tr><th>Naručio</th><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum poručivanja</th><th>Status</th><th>Izmeni status</th></tr>';
+
+                for (let porudzbina in data) {
+                    let datumPostavljanja = new Date(data[porudzbina].DatumPorudzbine);
+                    let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                    let statusPom = data[porudzbina].Status;
+                    let status;
+                    if (statusPom === 0)
+                        status = "Aktivan";
+                    if (statusPom === 1)
+                        status = "Izvršen";
+                    if (statusPom === 2)
+                        status = "Otkazan";
+
+                    tabelaPorudzbina += `<tr><th>${data[porudzbina].Kupac}</th><td><img alt="" src="${data[porudzbina].Proizvod.Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[porudzbina].Proizvod.Naziv}</td><td>${data[porudzbina].Proizvod.Cena}</td><td>${data[porudzbina].Kolicina}</td><td>${data[porudzbina].Proizvod.Opis}</td><td>${formattedDate}</td><td>${status}</td><td style="text-align: center;"><div style="display: flex; justify-content: center; gap: 5px;"><button class="izvrsiBtn" name="${data[porudzbina].Proizvod.Naziv}">Izvršen</button><button class="otkaziBtn" name="${data[porudzbina].Proizvod.Naziv}">Otkazan</button></div></td></tr>`;
+                }
+                tabelaPorudzbina += "</table>";
+                $("#contentPorudzbine").html(tabelaPorudzbina);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="Početna.html">Početna</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Prijava.html">Prijava</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Registracija.html">Registracija</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" id="prikazLink" href="">Uloga</a>
+        </li>
+    </ul>
+    <br />
+    <h1 style="position: relative; top: 30px; left: 0; font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Prikaz svih korisnika u sistemu :</h1>
+    <div class="image-container">
+        <img id="imgClick" alt="" style="max-width: 60px; max-height: 60px; cursor: pointer;"
+            src="Pictures\\Profile-Place-Holder.jpg">
+    </div>
+    <div class="btn-container">
+        <input id="odjavaBtn" style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+            value="Odjava" onclick="changePrikazHrefOdjava()" />
+    </div>
+    <br />
+    <br />
+    <div id="contentKorisnici"></div>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Pretraga korisnika</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Ime korisnika:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="ime" name="ime"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Prezime korisnika:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="prezime" name="prezime"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum rođenja:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="date" id="datumR" name="datumR"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Uloga korisnika:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="uloge" name="uloge">
+                    <option></option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="kupac">Kupac</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="prodavac">Prodavac</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="searchButton"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Pretraži" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Sortiranje korisnika</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Ime korisnika:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortIme" name="tipSortIme">
+                    <option></option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum rođenja:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortDatum" name="tipSortDatum">
+                    <option></option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Uloga korisnika:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortUloga" name="tipSortUloga">
+                    <option></option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="sortButton"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Sortiraj" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Dodavanje prodavca</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Korisničko ime:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="korisnickoIme"
+                    name="korisnickoIme" maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Lozinka:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="password" id="lozinka" name="lozinka"
+                    maxlength="18" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Ime:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="imeD" name="imeD"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Prezime:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="prezimeD" name="prezimeD"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Pol:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="pol" name="pol"
+                    maxlength="6" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Email:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="email" name="email"
+                    maxlength="30" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum rođenja:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="date" id="datumRodjenja"
+                    name="datumRodjenja" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Uloga:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="ulogeD" name="ulogeD">
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="prodavac">Prodavac</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="dodajProdavcaBtn"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Dodaj" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Prikaz svih proizvoda u sistemu:</h1>
+    <br />
+    <div id="contentProizvodi"></div>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Pretraga proizvoda</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Dostupan proizvod?</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="status" name="status">
+                    <option></option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="da">Da</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="ne">Ne</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="pretragaProizvod"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Pretraži" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Sortiranje proizvoda</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naziv proizvoda:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortNaziv" name="tipSortNaziv">
+                    <option> </option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Cena proizvoda:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortCena" name="tipSortCena">
+                    <option> </option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum postavljanja:</td>
+            <td>
+                <select style="font-family: 'Arial', sans-serif; color: blue" id="tipSortDatumP" name="tipSortDatumP">
+                    <option> </option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="rastuce">Rastuće</option>
+                    <option style="font-family: 'Arial', sans-serif; color: blue" value="opadajuce">Opadajuće</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="sortiranjeProizvoda"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Sortiraj" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Prikaz svih porudžbina u sistemu:</h1>
+    <br />
+    <div id="contentPorudzbine"></div>
+    <br />
+</body>
+
+</html>

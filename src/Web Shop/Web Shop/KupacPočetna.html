@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+    <script src="Scripts/code.jquery.com_jquery-3.6.0.min.js"></script>
+    <title>Kupac</title>
+    <style>
+        .product-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .product-table th,
+        .product-table td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        .image-container {
+            position: fixed;
+            top: 40px;
+            right: 0;
+        }
+
+        .btn-container {
+            position: fixed;
+            top: 105px;
+            right: 0;
+        }
+
+        .nav-link[href=""] {
+            display: none;
+        }
+    </style>
+    <script src="Scripts/nav.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#imgClick').click(function () {
+                window.location.href = "KorisničkaStranica.html";
+            });
+
+            $.ajax({
+                url: "/api/korisnici/porudzbine",
+                type: "GET",
+                success: function (data) {
+                    IspisPorudzbina(data.Data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Hiba történt: " + error);
+                }
+            });
+
+            $.ajax({
+                url: "/api/proizvodi",
+                type: "GET",
+                success: function (data) {
+                    IspisSvihProizvoda(data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Hiba történt: " + error);
+                }
+            });
+
+            $.ajax({
+                url: "/api/korisnici/omiljeni",
+                type: "GET",
+                success: function (data) {
+                    IspisProizvoda(data.Data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Hiba történt: " + error);
+                }
+            });
+
+            $(document).on('click', '#odjavaBtn', function () {
+                alert('Odjavili ste se ! Otvara vam se početna stranica...');
+
+                $.ajax({
+                    url: '/api/korisnici/odjava',
+                    type: 'POST',
+                    success: function (data) {
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+                window.location.href = "Početna.html";
+            });
+
+            $(document).on('click', '.omlinjenBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/dodajuOmiljne',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste dodali proizvod u listu omiljenih !!');
+                        window.location.href = "KupacPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $('#naruciBtn').click(function () {
+                let naziv = $('#naziv').val();
+                let kolicina = $('#kolicina').val();
+
+                if (naziv.length === 0) {
+                    alert('Naziv proizvoda mora biti popunjen !');
+                    $('#naziv').css({ "border-color": "red", "border-width": "3px" });
+                }
+                else {
+                    $('#naziv').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (kolicina.length === 0) {
+                    alert('Količina proizvoda mora biti popunjena !');
+                    $('#kolicina').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#kolicina').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/naruci',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv, kolicina: kolicina }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste poručili proizvod !!');
+                        window.location.href = "KupacPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.statusBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/izmeniStatus',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste izmenili status !!');
+                        window.location.href = "KupacPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $('#objaviBtn').click(function () {
+                let naziv = $('#nazivP').val();
+                let naslov = $('#naslov').val();
+                let opis = $('#opis').val();
+
+                if (naziv.length === 0) {
+                    alert('Naziv proizvoda mora biti popunjen !');
+                    $('#nazivP').css({ "border-color": "red", "border-width": "3px" });
+                }
+                else {
+                    $('#nazivP').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (naslov.length === 0) {
+                    alert('Naslov recenzije mora biti popunjen !');
+                    $('#naslov').css({ "border-color": "red", "border-width": "3px" });
+                }
+                else {
+                    $('#naslov').css({ "border-color": "black", "border-width": "1px" });
+                }
+                if (opis.length === 0) {
+                    alert('Opis recenzije mora biti popunjena !');
+                    $('#opis').css({ "border-color": "red", "border-width": "3px" });
+                    return;
+                }
+                else {
+                    $('#opis').css({ "border-color": "black", "border-width": "1px" });
+                }
+
+                $.ajax({
+                    url: '/api/korisnici/dodajRecenziju',
+                    type: 'POST',
+                    data: JSON.stringify({ naslov: naslov, opis: opis, naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste dodali recenziju !!');
+                        $('#nazivP').val('');
+                        $('#naslov').val('');
+                        $('#opis').val('');
+                        window.location.href = "KupacPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                        $('#nazivP').val('');
+                        $('#naslov').val('');
+                        $('#opis').val('');
+                    }
+                });
+            });
+
+            $(document).on('click', '.izmeniRBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/pripremaZaIzmenu',
+                    type: 'POST',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        window.location.href = "IzmenaRecenzije.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.obrisiRBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/brisanjeRecenzije',
+                    type: 'DELETE',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert('Uspešno ste obrisali recenziju !');
+                        window.location.href = "KupacPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            function IspisProizvoda(data) {
+                let tabelaOmiljenih = "<table class='product-table'>";
+                tabelaOmiljenih += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+
+                for (let product in data) {
+                    let datumPostavljanja = new Date(data[product].DatumPostavljanja);
+                    let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                    tabelaOmiljenih += `<tr><td><img alt="" src="${data[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Opis}</td><td>${formattedDate}</td><td>${data[product].Grad}</td><td>${data[product].Dostupan}</td></tr>`;
+                }
+                tabelaOmiljenih += "</table>";
+                $("#contentProizvod").html(tabelaOmiljenih);
+            }
+
+            function IspisSvihProizvoda(data) {
+                let tabelaProizvoda = "<table class='product-table'>";
+                tabelaProizvoda += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th><th>Omlijen</th></tr>';
+
+                for (let product in data) {
+                    let datumPostavljanja = new Date(data[product].DatumPostavljanja);
+                    let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                    tabelaProizvoda += `<tr><td><img alt="" src="${data[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Opis}</td><td>${formattedDate}</td><td>${data[product].Grad}</td><td>${data[product].Dostupan}</td><td><button class="omlinjenBtn" name="${data[product].Naziv}">Dodaj</button></td></tr>`;
+                }
+                tabelaProizvoda += "</table>";
+                $("#contentSvi").html(tabelaProizvoda);
+            }
+
+            function IspisPorudzbina(data) {
+                let tabelaPorudzina = "<table class='product-table'>";
+                tabelaPorudzina += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum poručivanja</th><th>Status</th><th>Promena statusa</th><th>Recenzije</th><th>Izmena recenzije</th><th>Brisanje recenzije</th></tr>';
+
+                for (let product in data) {
+                    let datumPostavljanja = new Date(data[product].DatumPorudzbine);
+                    let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
+                    let statusPom = data[product].Status
+                    let status
+                    if (statusPom === 0)
+                        status = "Aktivan"
+                    if (statusPom === 1)
+                        status = "Izvršen"
+                    if (statusPom === 2)
+                        status = "Otkazan"
+
+                    tabelaPorudzina += `<tr><td><img alt="" src="${data[product].Proizvod.Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[product].Proizvod.Naziv}</td><td>${data[product].Proizvod.Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Proizvod.Opis}</td><td>${formattedDate}</td><td>${status}</td><td style="text-align: center;"><button class="statusBtn" name="${data[product].Proizvod.Naziv}" style="display: block; margin: 0 auto;">Promeni status</button></td><td>${data[product].Proizvod.Recenzije[data[product].Proizvod.Recenzije.length - 1].SadrzajRecenzije}</td><td style="text-align: center;"><button class="izmeniRBtn" name="${data[product].Proizvod.Naziv}" style="display: block; margin: 0 auto;">Izmeni</button></td><td style="text-align: center;"><button class="obrisiRBtn" name="${data[product].Proizvod.Naziv}" style="display: block; margin: 0 auto;">Obriši</button></td></tr>`;
+                }
+                tabelaPorudzina += "</table>";
+                $("#contentPorudzbina").html(tabelaPorudzina);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="Početna.html">Početna</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Prijava.html">Prijava</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Registracija.html">Registracija</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" id="prikazLink" href="">Uloga</a>
+        </li>
+    </ul>
+    <br />
+    <h1 style="position: relative; top: 30px; left: 0; font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Prikaz vaših porudžbina :</h1>
+    <div class="image-container">
+        <img id="imgClick" alt="" style="max-width: 60px; max-height: 60px; cursor: pointer;"
+            src="Pictures\\Profile-Place-Holder.jpg">
+    </div>
+    <div class="btn-container">
+        <input id="odjavaBtn" style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+            value="Odjava" onclick="changePrikazHrefOdjava()" />
+    </div>
+    <br />
+    <br />
+    <div id="contentPorudzbina"></div>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Dodaj recenziju :</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naziv proizvoda:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="nazivP" name="nazivP"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naslov recenzije:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="naslov" name="naslov"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Opis recenzije:</td>
+            <td>
+                <textarea
+                    style="font-family: 'Arial', sans-serif; color: blue; resize: none; width: 200px; height: 100px;"
+                    id="opis" name="opis"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="objaviBtn"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Objavi" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Prikaz svih dostupnih proizvoda :</h1>
+    <div id="contentSvi"></div>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Naruči proizvod :</h1>
+    <table>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Naziv proizvoda:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="text" id="naziv" name="naziv"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Količina proizvoda:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="number" id="kolicina" name="kolicina"
+                    maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td>
+                <input class="btn btn-outline-primary" id="naruciBtn"
+                    style="font-family: 'Times New Roman', sans-serif; font-weight: bold;" type="submit"
+                    value="Naruči" />
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h1 style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">
+        Spisak vaših omiljenih proizvoda :</h1>
+    <div id="contentProizvod"></div>
+    <br />
+</body>
+
+</html>

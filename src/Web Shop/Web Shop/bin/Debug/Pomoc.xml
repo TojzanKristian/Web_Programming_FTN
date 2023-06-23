@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ArrayOfKorisnik xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Korisnik>
+    <KorisnickoIme>admin1</KorisnickoIme>
+    <Lozinka>adminftn1</Lozinka>
+    <Ime>Siniša</Ime>
+    <Prezime>Nikolić</Prezime>
+    <Pol>muški</Pol>
+    <Email>sinisa_nikolic@uns.ac.rs</Email>
+    <DatumRodjenja>1984-04-23T00:00:00</DatumRodjenja>
+    <Uloga>Administrator</Uloga>
+    <Porudzbine />
+    <OmiljeniProizvodi />
+    <ObjavljeniProizvodi />
+  </Korisnik>
+</ArrayOfKorisnik>
