@@ -163,8 +163,8 @@ C:\Veb\web_programming_ftn\Web Shop\Web Shop\bin\System.Web.WebPages.Deployment.
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\bin\System.Web.WebPages.Razor.xml
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\bin\Antlr3.Runtime.pdb
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Veb\web_programming_ftn\Web Shop\Web Shop\obj\Debug\Web Shop.csproj.AssemblyReference.cache
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\obj\Debug\Web Shop.csproj.CoreCompileInputs.cache
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\obj\Debug\Web Shop.csproj.CopyComplete
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\obj\Debug\Web Shop.dll
 C:\Veb\web_programming_ftn\Web Shop\Web Shop\obj\Debug\Web Shop.pdb
-C:\Veb\web_programming_ftn\Web Shop\Web Shop\obj\Debug\Web Shop.csproj.AssemblyReference.cache

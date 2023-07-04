@@ -7,7 +7,7 @@ namespace Web_Shop.Models
     public class Korisnik
     {
         #region Polja
-        private string korisnickoIme;
+        private string korisnickoIme; // jedinstveno
         private string lozinka;
         private string ime;
         private string prezime;
@@ -15,9 +15,9 @@ namespace Web_Shop.Models
         private string email;
         private DateTime datumRodjenja;
         private Uloge uloga;
-        private List<Porudzbina> porudzbine;
-        private List<Proizvod> omiljeniProizvodi;
-        private List<Proizvod> objavljeniProizvodi;
+        private List<Porudzbina> porudzbine; // naručeni proizvodi od strane kupca
+        private List<Proizvod> omiljeniProizvodi; // proizvodi koje kupac doda kao omiljene
+        private List<Proizvod> objavljeniProizvodi; // postavljeni proizvodi od strane prodavca
         #endregion
 
         #region Konstruktori

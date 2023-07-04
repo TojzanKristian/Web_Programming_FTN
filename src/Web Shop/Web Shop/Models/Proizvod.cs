@@ -14,7 +14,7 @@ namespace Web_Shop.Models
         private DateTime datumPostavljanja;
         private string grad;
         private List<Recenzija> recenzije;
-        private string dostupan;
+        private string dostupan; // status da li je proizvod dostupan -> može biti 'Da', 'Ne'
         #endregion
 
         #region Konstruktori

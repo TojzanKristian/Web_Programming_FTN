@@ -40,6 +40,7 @@
             $.ajax({
                 url: "/api/korisnici",
                 type: "GET",
+                dataType: 'json',
                 success: function (data) {
                     IspisKorisnika(data);
                 },
@@ -51,6 +52,7 @@
             $.ajax({
                 url: "/api/proizvodi",
                 type: "GET",
+                dataType: 'json',
                 success: function (data) {
                     IspisSvihProizvoda(data);
                 },
@@ -62,6 +64,7 @@
             $.ajax({
                 url: '/api/korisnici/sveporudzbine',
                 type: 'GET',
+                dataType: 'json',
                 success: function (data) {
                     IspisPorudzbina(data.Data);
                 },
@@ -89,26 +92,15 @@
                 let ime = $('#ime').val();
                 let prezime = $('#prezime').val();
                 let datumR = $('#datumR').val();
+                let datumR1 = $('#datumR1').val();
                 let uloge = $('#uloge').val();
 
-                if (ime.length === 0) {
-                    ime = ""
-                }
-                if (prezime.length === 0) {
-                    prezime = ""
-                }
-                if (datumR.length === 0) {
-                    datumR = ""
-                }
-                if (uloge.length === 0) {
-                    uloge = ""
-                }
-
-                if (ime.length === 0 && prezime.length === 0 && datumR.length === 0 && uloge.length === 0) {
+                if (ime.length === 0 && prezime.length === 0 && datumR.length === 0 && datumR1.length === 0 && uloge.length === 0) {
                     alert('Greška - Pupunite polje/a za naziv ili grad ili cenu !!');
                     $('#ime').css({ "border-color": "red", "border-width": "3px" });
                     $('#prezime').css({ "border-color": "red", "border-width": "3px" });
                     $('#datumR').css({ "border-color": "red", "border-width": "3px" });
+                    $('#datumR1').css({ "border-color": "red", "border-width": "3px" });
                     $('#uloge').css({ "border-color": "red", "border-width": "3px" });
                     return;
                 }
@@ -116,19 +108,21 @@
                     $('#ime').css({ "border-color": "black", "border-width": "1px" });
                     $('#prezime').css({ "border-color": "black", "border-width": "1px" });
                     $('#datumR').css({ "border-color": "black", "border-width": "1px" });
+                    $('#datumR1').css({ "border-color": "black", "border-width": "1px" });
                     $('#uloge').css({ "border-color": "black", "border-width": "1px" });
                 }
 
                 $.ajax({
                     url: '/api/korisnici/admin/search',
                     type: 'GET',
-                    data: { ime: ime, prezime: prezime, datumR: datumR, uloge: uloge },
+                    data: { ime: ime, prezime: prezime, datumR: datumR, datumR1: datumR1, uloge: uloge },
                     success: function (result) {
                         IspisKorisnika(result);
 
                         $('#ime').val('');
                         $('#prezime').val('');
                         $('#datumR').val('');
+                        $('#datumR1').val('');
                         $('#uloge').prop('selectedIndex', 0);
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -136,6 +130,7 @@
                         $('#ime').val('');
                         $('#prezime').val('');
                         $('#datumR').val('');
+                        $('#datumR1').val('');
                         $('#uloge').prop('selectedIndex', 0);
                     }
                 });
@@ -170,6 +165,7 @@
                 $.ajax({
                     url: '/api/korisnici/admin/sort',
                     type: 'GET',
+                    dataType: 'json',
                     data: { imeSort: imeSort, datumSort: datumSort, ulogeSort: ulogeSort },
                     success: function (res) {
                         IspisKorisnika(res);
@@ -202,6 +198,7 @@
                 $.ajax({
                     url: '/api/korisnici/admin/proizvodi/pretraga',
                     type: 'GET',
+                    dataType: 'json',
                     data: { status: status },
                     success: function (result) {
                         IspisSvihProizvoda(result);
@@ -244,6 +241,7 @@
                 $.ajax({
                     url: '/api/korisnici/admin/proizvodi/sort',
                     type: 'GET',
+                    dataType: 'json',
                     data: { nazivSort: nazivSort, cenaSort: cenaSort, datumPSort: datumPSort },
                     success: function (res) {
                         IspisSvihProizvoda(res);
@@ -299,7 +297,7 @@
 
                 $.ajax({
                     url: '/api/korisnici/statusIzvrsen',
-                    type: 'POST',
+                    type: 'PUT',
                     data: JSON.stringify({ naziv: naziv }),
                     contentType: 'application/json',
                     success: function (data) {
@@ -317,7 +315,7 @@
 
                 $.ajax({
                     url: '/api/korisnici/statusOtkazan',
-                    type: 'POST',
+                    type: 'PUT',
                     data: JSON.stringify({ naziv: naziv }),
                     contentType: 'application/json',
                     success: function (data) {
@@ -479,6 +477,42 @@
                 });
             });
 
+            $(document).on('click', '.odobriBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/odobriRecenziju',
+                    type: 'PUT',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert("Uspešno je izmenjen status recenzije !!");
+                        window.location.href = "AdminPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.odbijBtn', function () {
+                let naziv = $(this).attr('name');
+
+                $.ajax({
+                    url: '/api/korisnici/odbijRecenziju',
+                    type: 'PUT',
+                    data: JSON.stringify({ naziv: naziv }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        alert("Uspešno je izmenjen status recenzije !!");
+                        window.location.href = "AdminPočetna.html";
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Greška: ' + xhr.responseText);
+                    }
+                });
+            });
+
             function IspisKorisnika(data) {
                 let tabelaKorisnika = "<table class='product-table'>";
                 tabelaKorisnika += '<tr><th>Korisničko ime</th><th>Lozinka</th><th>Ime</th><th>Prezime</th><th>Pol</th><th>Email</th><th>Datum rođenja</th><th>Uloga</th><th>Izmena</th><th>Brisanje</th></tr>';
@@ -516,7 +550,7 @@
 
             function IspisPorudzbina(data) {
                 let tabelaPorudzbina = "<table class='product-table'>";
-                tabelaPorudzbina += '<tr><th>Naručio</th><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum poručivanja</th><th>Status</th><th>Izmeni status</th></tr>';
+                tabelaPorudzbina += '<tr><th>Naručio</th><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum poručivanja</th><th>Status</th><th>Izmeni status</th><th>Recenzije</th><th>Objavi</th></tr>';
 
                 for (let porudzbina in data) {
                     let datumPostavljanja = new Date(data[porudzbina].DatumPorudzbine);
@@ -529,8 +563,9 @@
                         status = "Izvršen";
                     if (statusPom === 2)
                         status = "Otkazan";
+                    let recenzija = data[porudzbina].Proizvod.Recenzije[data[porudzbina].Proizvod.Recenzije.length - 1].SadrzajRecenzije;
 
-                    tabelaPorudzbina += `<tr><th>${data[porudzbina].Kupac}</th><td><img alt="" src="${data[porudzbina].Proizvod.Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[porudzbina].Proizvod.Naziv}</td><td>${data[porudzbina].Proizvod.Cena}</td><td>${data[porudzbina].Kolicina}</td><td>${data[porudzbina].Proizvod.Opis}</td><td>${formattedDate}</td><td>${status}</td><td style="text-align: center;"><div style="display: flex; justify-content: center; gap: 5px;"><button class="izvrsiBtn" name="${data[porudzbina].Proizvod.Naziv}">Izvršen</button><button class="otkaziBtn" name="${data[porudzbina].Proizvod.Naziv}">Otkazan</button></div></td></tr>`;
+                    tabelaPorudzbina += `<tr><th>${data[porudzbina].Kupac}</th><td><img alt="" src="${data[porudzbina].Proizvod.Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[porudzbina].Proizvod.Naziv}</td><td>${data[porudzbina].Proizvod.Cena}</td><td>${data[porudzbina].Kolicina}</td><td>${data[porudzbina].Proizvod.Opis}</td><td>${formattedDate}</td><td>${status}</td><td style="text-align: center;"><div style="display: flex; justify-content: center; gap: 5px;"><button class="izvrsiBtn" name="${data[porudzbina].Proizvod.Naziv}">Izvršen</button><button class="otkaziBtn" name="${data[porudzbina].Proizvod.Naziv}">Otkazan</button></div></td><td>${recenzija}</td><td style="text-align: center;"><div style="display: flex; justify-content: center; gap: 5px;"><button class="odobriBtn" name="${data[porudzbina].Proizvod.Naziv}">Odobri</button><button class="odbijBtn" name="${data[porudzbina].Proizvod.Naziv}">Odbij</button></div></td></tr>`;
                 }
                 tabelaPorudzbina += "</table>";
                 $("#contentPorudzbine").html(tabelaPorudzbina);
@@ -582,8 +617,11 @@
                     maxlength="25" /></td>
         </tr>
         <tr>
-            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum rođenja:</td>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Datum rođenja od:</td>
             <td><input style="font-family: 'Arial', sans-serif; color: blue" type="date" id="datumR" name="datumR"
+                    maxlength="25" /></td>
+            <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">do:</td>
+            <td><input style="font-family: 'Arial', sans-serif; color: blue" type="date" id="datumR1" name="datumR1"
                     maxlength="25" /></td>
         </tr>
         <tr>

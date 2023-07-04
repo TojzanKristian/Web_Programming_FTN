@@ -38,13 +38,20 @@
             $.ajax({
                 url: "/api/proizvodi",
                 type: "GET",
+                dataType: 'json',
                 success: function (data, status) {
                     let tableOfProducts = "<table class='product-table'>";
-                    tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+                    tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th><th>Recenzije</th></tr>';
                     for (let product in data) {
                         let datumPostavljanja = new Date(data[product].DatumPostavljanja);
                         let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
-                        tableOfProducts += `<tr><td><img alt="" src="${data[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Opis}</td><td>${formattedDate}</td><td>${data[product].Grad}</td><td>${data[product].Dostupan}</td></tr>`;
+                        let recenzija = data[product].Recenzije[0].SadrzajRecenzije;
+                        if (data[product].Recenzije.length > 1) {
+                            if (data[product].Recenzije[data[product].Recenzije.length - 1].Prikazi == true) {
+                                recenzija = data[product].Recenzije[data[product].Recenzije.length - 1].SadrzajRecenzije;
+                            }
+                        }
+                        tableOfProducts += `<tr><td><img alt="" src="${data[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Opis}</td><td>${formattedDate}</td><td>${data[product].Grad}</td><td>${data[product].Dostupan}</td><td>${recenzija}</td></tr>`;
                     }
                     tableOfProducts += "</table>";
                     $("#content").html(tableOfProducts);
@@ -78,14 +85,21 @@
                 $.ajax({
                     url: '/api/proizvodi/search',
                     type: 'GET',
+                    dataType: 'json',
                     data: { naziv: naziv, grad: grad, minCena: minCena, maxCena: maxCena },
                     success: function (result) {
                         let tableOfProducts = "<table class='product-table''>";
-                        tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+                        tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th><th>Recenzije</th></tr>';
                         for (product in result) {
                             let datumPostavljanja = new Date(result[product].DatumPostavljanja);
                             let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
-                            tableOfProducts += `<tr><td><img alt="" src="${result[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${result[product].Naziv}</td><td>${result[product].Cena}</td><td>${result[product].Kolicina}</td><td>${result[product].Opis}</td><td>${formattedDate}</td><td>${result[product].Grad}</td><td>${result[product].Dostupan}</td></tr>`;
+                            let recenzija = result[product].Recenzije[0].SadrzajRecenzije;
+                            if (result[product].Recenzije.length > 1) {
+                                if (result[product].Recenzije[result[product].Recenzije.length - 1].Prikazi == true) {
+                                    recenzija = result[product].Recenzije[result[product].Recenzije.length - 1].SadrzajRecenzije;
+                                }
+                            }
+                            tableOfProducts += `<tr><td><img alt="" src="${result[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${result[product].Naziv}</td><td>${result[product].Cena}</td><td>${result[product].Kolicina}</td><td>${result[product].Opis}</td><td>${formattedDate}</td><td>${result[product].Grad}</td><td>${result[product].Dostupan}</td><td>${recenzija}</td></tr>`;
                         }
                         tableOfProducts += "</table>";
                         $("#content").html(tableOfProducts);
@@ -129,14 +143,21 @@
                 $.ajax({
                     url: '/api/proizvodi/sort',
                     type: 'GET',
+                    dataType: 'json',
                     data: { sortN: sortN, sortC: sortC, sortD: sortD },
                     success: function (res) {
                         let tableOfProducts = "<table class='product-table''>";
-                        tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th></tr>';
+                        tableOfProducts += '<tr><th>Slika</th><th>Naziv</th><th>Cena</th><th>Količina</th><th>Opis</th><th>Datum postavljanja</th><th>Grad</th><th>Dostupan?</th><th>Recenzije</th></tr>';
                         for (product in res) {
                             let datumPostavljanja = new Date(res[product].DatumPostavljanja);
                             let formattedDate = datumPostavljanja.toLocaleDateString('hu-HU');
-                            tableOfProducts += `<tr><td><img alt="" src="${res[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${res[product].Naziv}</td><td>${res[product].Cena}</td><td>${res[product].Kolicina}</td><td>${res[product].Opis}</td><td>${formattedDate}</td><td>${res[product].Grad}</td><td>${res[product].Dostupan}</td></tr>`;
+                            let recenzija = res[product].Recenzije[0].SadrzajRecenzije;
+                            if (res[product].Recenzije.length > 1) {
+                                if (res[product].Recenzije[res[product].Recenzije.length - 1].Prikazi == true) {
+                                    recenzija = res[product].Recenzije[res[product].Recenzije.length - 1].SadrzajRecenzije;
+                                }
+                            }
+                            tableOfProducts += `<tr><td><img alt="" src="${res[product].Slika}" style="max-width: 60px; max-height: 60px;"></td><td>${res[product].Naziv}</td><td>${res[product].Cena}</td><td>${res[product].Kolicina}</td><td>${res[product].Opis}</td><td>${formattedDate}</td><td>${res[product].Grad}</td><td>${res[product].Dostupan}</td><td>${recenzija}</td></tr>`;
                         }
                         tableOfProducts += "</table>";
                         $("#content").html(tableOfProducts);

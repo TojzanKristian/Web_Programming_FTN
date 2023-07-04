@@ -35,6 +35,7 @@
             $.ajax({
                 url: '/api/korisnici/preuzmiOznacenogKorisnika',
                 type: 'GET',
+                dataType: 'json',
                 success: function (data) {
                     $('#korisnickoIme').val(data.Data.KorisnickoIme);
                     $('#lozinka').val(data.Data.Lozinka);

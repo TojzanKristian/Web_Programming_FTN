@@ -35,9 +35,12 @@
             $.ajax({
                 url: '/api/korisnici/preuzmiRecenziju',
                 type: 'GET',
+                dataType: 'json',
                 success: function (data) {
                     $('#naslov').val(data.Data.Naslov);
                     $('#opis').val(data.Data.SadrzajRecenzije);
+                    let src = data.Data.Slika;
+                    $('#prikazSlike').attr('src', src);
                 },
                 error: function (xhr, status, error) {
                     alert('Greška: ' + xhr.responseText);
@@ -47,6 +50,7 @@
             $(document).on('click', '#izmenaBtn', function () {
                 let naslov = $('#naslov').val();
                 let opis = $('#opis').val();
+                let slika = $('#slika').val();
 
                 if (naslov.length === 0) {
                     alert('Naslov recenzije mora biti popunjena !');
@@ -67,7 +71,7 @@
                 $.ajax({
                     url: '/api/korisnici/izmenaRecenzije',
                     type: 'PUT',
-                    data: JSON.stringify({ naslov: naslov, opis: opis }),
+                    data: JSON.stringify({ naslov: naslov, opis: opis, slika: slika }),
                     contentType: 'application/json',
                     success: function (data) {
                         alert('Uspešno ste izmenili recenziju !');
@@ -78,6 +82,21 @@
                 });
             });
         });
+
+        function ubaciUFormuZaPrikaz(event) {
+            var fileInput = event.target;
+            var file = fileInput.files[0];
+
+            var reader = new FileReader();
+
+            reader.addEventListener('load', function () {
+                document.getElementById('prikazSlike').src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
 </head>
 
@@ -100,6 +119,18 @@
                         <textarea
                             style="font-family: 'Arial', sans-serif; color: blue; resize: none; width: 200px; height: 100px;"
                             id="opis" name="opis"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Slika proizvoda:</td>
+                    <td>
+                        <input type="file" id="slika" name="slika" onchange="ubaciUFormuZaPrikaz(event)">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <img alt="" src="" id="prikazSlike"
+                            style="max-width: 100px; max-height: 100px; display: block; margin: 0 auto; border: 1px solid black;">
                     </td>
                 </tr>
                 <tr>

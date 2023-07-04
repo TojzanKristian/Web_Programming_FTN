@@ -40,6 +40,7 @@
             $.ajax({
                 url: '/api/korisnici/objavljeni',
                 type: 'GET',
+                dataType: 'json',
                 success: function (data) {
                     IspisProizvoda(data);
                 },
@@ -66,6 +67,7 @@
                 $.ajax({
                     url: '/api/korisnici/search',
                     type: 'GET',
+                    dataType: 'json',
                     data: { dostupnost: dostupnost },
                     success: function (data) {
                         IspisProizvoda(data);
@@ -108,6 +110,7 @@
                 $.ajax({
                     url: '/api/korisnici/sort',
                     type: 'GET',
+                    dataType: 'json',
                     data: { sortN: sortN, sortC: sortC, sortD: sortD },
                     success: function (data) {
                         IspisProizvoda(data)
@@ -249,16 +252,7 @@
                 $.ajax({
                     url: '/api/proizvodi/dodaj',
                     type: 'POST',
-                    data: {
-                        'naziv': naziv,
-                        'cena': cena,
-                        'kolicina': kolicina,
-                        'opis': opis,
-                        'slika': slika,
-                        'datumPostavljanja': datum,
-                        'grad': grad,
-                        'dostupan': dostupan
-                    },
+                    data: { 'naziv': naziv, 'cena': cena, 'kolicina': kolicina, 'opis': opis, 'slika': slika, 'datumPostavljanja': datum, 'grad': grad, 'dostupan': dostupan },
                     success: function (data) {
                         alert('Proizvod je uspešno dodat !');
                         IspisProizvoda(data.Data);
@@ -270,6 +264,7 @@
                         $('#grad').val('');
                         $('#tip').prop('selectedIndex', 0);
                         $('#slika').val('');
+                        document.getElementById('prikazSlike').src = "";
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         alert('Greška: ' + xhr.responseText);
@@ -281,6 +276,7 @@
                         ('#grad').val('');
                         $('#tip').prop('selectedIndex', 0);
                         $('#slika').val('');
+                        document.getElementById('prikazSlike').src = "";
                     }
                 });
             });
@@ -298,6 +294,21 @@
                 $("#content").html(tableOfProducts);
             }
         });
+
+        function ubaciUFormuZaPrikaz(event) {
+            var fileInput = event.target;
+            var file = fileInput.files[0];
+
+            var reader = new FileReader();
+
+            reader.addEventListener('load', function () {
+                document.getElementById('prikazSlike').src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
 </head>
 
@@ -441,7 +452,13 @@
         <tr>
             <td style="font-family: 'Times New Roman', sans-serif; font-weight: bold;">Slika proizvoda:</td>
             <td>
-                <input type="file" id="slika" name="slika">
+                <input type="file" id="slika" name="slika" onchange="ubaciUFormuZaPrikaz(event)">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <img alt="" src="" id="prikazSlike"
+                    style="max-width: 100px; max-height: 100px; display: block; margin: 0 auto; border: 1px solid black;">
             </td>
         </tr>
         <tr>

@@ -23,19 +23,18 @@ namespace Web_Shop.Controllers
     {
         private readonly XML file = new XML();
 
-        // Prikaz korisnika Adminu
-        public List<Korisnik> Get()
+        // Funkcija za prikaz korisnika adminu
+        public IHttpActionResult Get()
         {
-            return file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
+            return Json(file.DeSerializeObject<List<Korisnik>>("Korisnici.xml"));
         }
 
-        // Pretraga proizvoda od strane admina
+        // Funkcija za pretragu proizvoda od strane admina
         [HttpGet]
         [Route("api/korisnici/admin/proizvodi/pretraga")]
         public IHttpActionResult PretragaProizvoda(string status)
         {
             List<Proizvod> result = LogikaPretrageProizvoda(status);
-
             return Json(result);
         }
         private List<Proizvod> LogikaPretrageProizvoda(string status)
@@ -56,13 +55,12 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Sortiranje proizvoda od strane admina
+        // Funkcija za sortiranje proizvoda od strane admina
         [HttpGet]
         [Route("api/korisnici/admin/proizvodi/sort")]
-        public IHttpActionResult SortProizvoda(string nazivSort, string cenaSort, string datumPSort)
+        public IHttpActionResult SortiranjeProizvoda(string nazivSort, string cenaSort, string datumPSort)
         {
             List<Proizvod> result = LogikaSortiranjaProivoda(nazivSort, cenaSort, datumPSort);
-
             return Json(result);
         }
         private List<Proizvod> LogikaSortiranjaProivoda(string nazivSort, string cenaSort, string datumPSort)
@@ -105,16 +103,15 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Pretraga korisnika od strane admina
+        // Funkcija za pretragu korisnika od strane admina
         [HttpGet]
         [Route("api/korisnici/admin/search")]
-        public IHttpActionResult Search(string ime, string prezime, string datumR, string uloge)
+        public IHttpActionResult PretragaKodAdmina(string ime, string prezime, string datumR, string datumR1, string uloge)
         {
-            List<Korisnik> result = LogikaPretrage(ime, prezime, datumR, uloge);
-
+            List<Korisnik> result = LogikaPretrage(ime, prezime, datumR, datumR1, uloge);
             return Json(result);
         }
-        private List<Korisnik> LogikaPretrage(string ime, string prezime, string datumR, string uloge)
+        private List<Korisnik> LogikaPretrage(string ime, string prezime, string datumR, string datumR1, string uloge)
         {
             List<Korisnik> retV = new List<Korisnik>();
             List<Korisnik> korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
@@ -137,7 +134,8 @@ namespace Web_Shop.Controllers
                 if (datumR != null)
                 {
                     DateTime datum = DateTime.Parse(datumR);
-                    if (k.DatumRodjenja == datum)
+                    DateTime datum1 = DateTime.Parse(datumR1);
+                    if (k.DatumRodjenja >= datum && k.DatumRodjenja <= datum1)
                     {
                         retV.Add(k);
                     }
@@ -162,13 +160,12 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Sortiranje korisnika od strane admina
+        // Funkcija za sortiranje korisnika od strane admina
         [HttpGet]
         [Route("api/korisnici/admin/sort")]
-        public IHttpActionResult Sort(string imeSort, string datumSort, string ulogeSort)
+        public IHttpActionResult SortiranjeKodAdmina(string imeSort, string datumSort, string ulogeSort)
         {
             List<Korisnik> result = LogikaSortiranja(imeSort, datumSort, ulogeSort);
-
             return Json(result);
         }
         private List<Korisnik> LogikaSortiranja(string imeSort, string datumSort, string ulogeSort)
@@ -212,14 +209,14 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Prijava
+        // Funkcija koja služi za prijavu
         public IHttpActionResult Get(string korisnickoIme, string lozinka)
         {
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
             int brojac = 0;
             foreach (Korisnik pom in Globals.Korisnici)
             {
-                if (pom.KorisnickoIme.Contains(korisnickoIme) && pom.Lozinka.Contains(lozinka))
+                if (pom.KorisnickoIme.Equals(korisnickoIme) && pom.Lozinka.Equals(lozinka))
                 {
                     Globals.Prijavljen = pom;
                     brojac++;
@@ -229,7 +226,7 @@ namespace Web_Shop.Controllers
             List<Korisnik> admini = file.DeSerializeObject<List<Korisnik>>("Administratori.xml");
             foreach (Korisnik pom in admini)
             {
-                if (pom.KorisnickoIme.Contains(korisnickoIme) && pom.Lozinka.Contains(lozinka))
+                if (pom.KorisnickoIme.Equals(korisnickoIme) && pom.Lozinka.Equals(lozinka))
                 {
                     Globals.Prijavljen = pom;
                     brojac++;
@@ -238,7 +235,7 @@ namespace Web_Shop.Controllers
 
             if (brojac == 0)
             {
-                return BadRequest($"Korisnik sa korisničkim imenom {korisnickoIme} ne postoji ! Otvori će vam se stranica za registraciju....");
+                return BadRequest($"Korisnik sa korisničkim imenom {korisnickoIme} ne postoji ! Pokušajte ponovo...");
             }
 
             List<Korisnik> x = new List<Korisnik>
@@ -253,11 +250,10 @@ namespace Web_Shop.Controllers
                 Data = temp,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Preuzimanje porudžbina kod kupca
+        // Funkcija za prikaz porudžbina kod kupca
         [HttpGet]
         [Route("api/korisnici/porudzbine")]
         public IHttpActionResult GetPorudzbine()
@@ -269,7 +265,7 @@ namespace Web_Shop.Controllers
 
             foreach (Korisnik pom in Globals.Korisnici)
             {
-                if (pom.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                if (pom.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
                     poruceno = pom.Porudzbine;
                 }
@@ -280,11 +276,10 @@ namespace Web_Shop.Controllers
                 Data = poruceno,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Preuzimanje svih porudžbina za admina
+        // Funkcija za prikaz svih porudžbina u sistemu za admina
         [HttpGet]
         [Route("api/korisnici/sveporudzbine")]
         public IHttpActionResult SvePorudzbine()
@@ -305,11 +300,10 @@ namespace Web_Shop.Controllers
                 Data = sve,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Preuzimanje omiljenih proizvoda kupca
+        // Funkcija za prikaz omiljenih proizvoda kod kupca
         [HttpGet]
         [Route("api/korisnici/omiljeni")]
         public IHttpActionResult GetOmiljeni()
@@ -319,11 +313,12 @@ namespace Web_Shop.Controllers
             Globals.Prijavljen = x[0];
             List<Proizvod> omiljeni = new List<Proizvod>();
 
-            foreach (Korisnik pom in Globals.Korisnici)
+            for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
-                if (pom.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                Korisnik pom = Globals.Korisnici[i];
+                if (pom.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
-                    omiljeni = Globals.Prijavljen.OmiljeniProizvodi;
+                    omiljeni = pom.OmiljeniProizvodi;
                 }
             }
 
@@ -332,10 +327,10 @@ namespace Web_Shop.Controllers
                 Data = omiljeni,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
+        // Funkcija za dodavanje proizvoda u omiljene kod kupca
         [HttpPost]
         [Route("api/korisnici/dodajuOmiljne")]
         public IHttpActionResult DodajUOmiljne([FromBody] JObject data)
@@ -348,7 +343,7 @@ namespace Web_Shop.Controllers
             Proizvod pom = null;
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
-                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(naziv))
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv))
                 {
                     pom = Proizvodi.ListaProizvoda[i];
                 }
@@ -359,20 +354,20 @@ namespace Web_Shop.Controllers
                 for (int i = 0; i < Globals.Korisnici.Count; i++)
                 {
                     Korisnik k = Globals.Korisnici[i];
-                    if (k.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                    if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                     {
                         x[0].OmiljeniProizvodi.Add(pom);
+                        k.OmiljeniProizvodi.Add(pom);
                     }
                 }
             }
 
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
-
             return Ok();
         }
 
-        // Poručivanje proizvoda od strane Kupca
+        // Funkcija za poručivanje proizvoda kod kupca
         [HttpPost]
         [Route("api/korisnici/naruci")]
         public IHttpActionResult NaruciProizvod([FromBody] JObject data)
@@ -386,7 +381,7 @@ namespace Web_Shop.Controllers
 
             foreach (Proizvod p in Proizvodi.ListaProizvoda)
             {
-                if (p.Naziv.Contains(naziv) && p.Kolicina > 0 && p.Kolicina >= kolicina && p.Dostupan.Contains("Da"))
+                if (p.Naziv.Equals(naziv) && p.Kolicina > 0 && p.Kolicina >= kolicina && p.Dostupan.Contains("Da") && kolicina == 1)
                 {
                     pomoc = p;
                 }
@@ -398,7 +393,6 @@ namespace Web_Shop.Controllers
             }
 
             Porudzbina poruceno = new Porudzbina(pomoc, kolicina, null, DateTime.Now, Statusi.AKTIVNA);
-
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
                 if (Globals.Korisnici[i].KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
@@ -416,20 +410,43 @@ namespace Web_Shop.Controllers
                 x[0].Porudzbine.Add(poruceno);
             }
 
-            for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
+            for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
-                if (pomoc.Naziv.Contains(Proizvodi.ListaProizvoda[i].Naziv))
+                if (Globals.Korisnici[i].KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
-                    Proizvodi.ListaProizvoda[i].Kolicina -= kolicina;
-                    if (Proizvodi.ListaProizvoda[i].Kolicina == 0)
+                    for (int j = 0; j < Globals.Korisnici[i].OmiljeniProizvodi.Count; j++)
                     {
-                        Proizvodi.ListaProizvoda[i].Dostupan = "Ne";
+                        if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Equals(naziv))
+                        {
+                            Globals.Korisnici[i].OmiljeniProizvodi[j].Kolicina -= kolicina;
+                            if (Globals.Korisnici[i].OmiljeniProizvodi[j].Kolicina == 0)
+                            {
+                                Globals.Korisnici[i].OmiljeniProizvodi[j].Dostupan = "Ne";
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int j = 0; j < Globals.Prijavljen.OmiljeniProizvodi.Count; j++)
+            {
+                if (Globals.Prijavljen.OmiljeniProizvodi[j].Naziv.Equals(naziv))
+                {
+                    Globals.Prijavljen.OmiljeniProizvodi[j].Kolicina -= kolicina;
+                    if (Globals.Prijavljen.OmiljeniProizvodi[j].Kolicina == 0)
+                    {
+                        Globals.Prijavljen.OmiljeniProizvodi[j].Dostupan = "Ne";
                     }
                 }
             }
 
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv))
+                {
+                    Proizvodi.ListaProizvoda[i].Kolicina -= kolicina;
+                }
+
                 if (Proizvodi.ListaProizvoda[i].Kolicina == 0)
                 {
                     Proizvodi.ListaProizvoda.Remove(Proizvodi.ListaProizvoda[i]);
@@ -439,11 +456,10 @@ namespace Web_Shop.Controllers
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
-
             return Ok();
         }
 
-        // Prikaz objavljenih proizvoda za prodavca
+        // Funkcija za prikaz objavljenih proizvoda kod prodavca
         [HttpGet]
         [Route("api/korisnici/objavljeni")]
         public List<Proizvod> Objavljeni()
@@ -452,14 +468,14 @@ namespace Web_Shop.Controllers
             return x[0].ObjavljeniProizvodi;
         }
 
-        // Registracija
+        // Funkcija koja obavlja registraciju na sistem
         public IHttpActionResult Post(Korisnik k)
         {
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
 
             foreach (Korisnik pom in Globals.Korisnici)
             {
-                if (pom.KorisnickoIme.Contains(k.KorisnickoIme))
+                if (pom.KorisnickoIme.Equals(k.KorisnickoIme))
                 {
                     return BadRequest($"Korisnik sa korisničkim imenom {k.KorisnickoIme} već postoji !");
                 }
@@ -467,20 +483,18 @@ namespace Web_Shop.Controllers
 
             Globals.Korisnici.Add(k);
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
             return Ok();
         }
 
-        // Dodavanje prodavca od strane admina
+        // Funkcija koja dodaje prodavca kod admina
         [HttpPost]
         [Route("api/korisnici/dodatProdavac")]
         public IHttpActionResult DodatProdavac(Korisnik korisnik)
         {
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
-
             foreach (Korisnik pom in Globals.Korisnici)
             {
-                if (pom.KorisnickoIme.Contains(korisnik.KorisnickoIme))
+                if (pom.KorisnickoIme.Equals(korisnik.KorisnickoIme))
                 {
                     return BadRequest($"Korisnik sa korisničkim imenom {korisnik.KorisnickoIme} već postoji !");
                 }
@@ -488,17 +502,16 @@ namespace Web_Shop.Controllers
 
             Globals.Korisnici.Add(korisnik);
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
             return Json(Globals.Korisnici);
         }
 
 
-        // Za prikaz profila
+        // Funkcija za prikaz profila svim korisnicima
         [HttpGet]
         [Route("api/korisnici/preuzmi")]
         public IHttpActionResult GetKorisnik()
         {
-            string filePath = GetProjectLocation() + "bin\\Debug\\Pomoc.xml";
+            string filePath = PutanjaDoProjekta() + "bin\\Debug\\Pomoc.xml";
             if (File.Exists(filePath))
             {
                 List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
@@ -520,11 +533,10 @@ namespace Web_Shop.Controllers
                 Data = temp,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Za izmenu korisnika kod admina
+        // Funkcija za izmenu korisnika kod admina
         [HttpGet]
         [Route("api/korisnici/preuzmiOznacenogKorisnika")]
         public IHttpActionResult PreuzmiKorisnika()
@@ -547,11 +559,10 @@ namespace Web_Shop.Controllers
                 Data = temp,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Za izmenu profila
+        // Funkcija za izmenu profila kod svih korisnika
         public IHttpActionResult Put(Korisnik k)
         {
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
@@ -560,10 +571,6 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
-                if (Globals.Korisnici[i].KorisnickoIme.Equals(k.KorisnickoIme))
-                {
-                    return BadRequest("Korisnik sa korisničkim imenom već postoji !!");
-                }
                 if (Globals.Korisnici[i].Ime.Equals(k.Ime))
                 {
                     Globals.Korisnici[i].KorisnickoIme = k.KorisnickoIme;
@@ -585,14 +592,21 @@ namespace Web_Shop.Controllers
                 Globals.Prijavljen.DatumRodjenja = k.DatumRodjenja;
             }
 
+            string korisnickoIme = k.KorisnickoIme;
+            bool isDuplicate = Globals.Korisnici.Count(kr => kr.KorisnickoIme.Equals(korisnickoIme)) > 1;
+
+            if (isDuplicate)
+            {
+                return BadRequest("Korisničko ime koje ste uneli već postoji !!");
+            }
 
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
-
             return Ok();
+
         }
 
-        // Za korisnika kod admina
+        // Funkcija za izmenu korisnika kod admina
         [HttpPut]
         [Route("api/korisnici/izmenaKodAdmina")]
         public IHttpActionResult IzmenaKorisnika(Korisnik k)
@@ -601,10 +615,6 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
-                if (Globals.Korisnici[i].KorisnickoIme.Equals(k.KorisnickoIme))
-                {
-                    return BadRequest("Korisnik sa korisničkim imenom već postoji !!");
-                }
                 if (Globals.Korisnici[i].Ime.Equals(k.Ime))
                 {
                     Globals.Korisnici[i].KorisnickoIme = k.KorisnickoIme;
@@ -616,21 +626,27 @@ namespace Web_Shop.Controllers
                 }
             }
 
-            file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
+            string korisnickoIme = k.KorisnickoIme;
+            bool isDuplicate = Globals.Korisnici.Count(kr => kr.KorisnickoIme.Equals(korisnickoIme)) > 1;
 
+            if (isDuplicate)
+            {
+                return BadRequest("Korisničko ime koje ste uneli već postoji !!");
+            }
+
+            file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
             return Ok();
         }
 
-        // Pretraga kod prodavca
+        // Funkcija za pretragu kod prodavca
         [HttpGet]
         [Route("api/korisnici/search")]
-        public IHttpActionResult SearchProducts(string dostupnost)
+        public IHttpActionResult PretragaKorisnikaAdmin(string dostupnost)
         {
-            List<Proizvod> result = SearchLogic(dostupnost);
-
+            List<Proizvod> result = PretragaLogika(dostupnost);
             return Json(result);
         }
-        private List<Proizvod> SearchLogic(string dostupnost)
+        private List<Proizvod> PretragaLogika(string dostupnost)
         {
             List<Proizvod> retV = new List<Proizvod>();
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
@@ -645,16 +661,15 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Sortiranje kod prodavca
+        // Funkcija za sortiranje kod prodavca
         [HttpGet]
         [Route("api/korisnici/sort")]
-        public IHttpActionResult SortProducts(string sortN, string sortC, string sortD)
+        public IHttpActionResult SortiranjeKorisnikaAdmin(string sortN, string sortC, string sortD)
         {
-            List<Proizvod> result = SortLogic(sortN, sortC, sortD);
-
+            List<Proizvod> result = SortiranjeLogika(sortN, sortC, sortD);
             return Json(result);
         }
-        private List<Proizvod> SortLogic(string sortN, string sortC, string sortD)
+        private List<Proizvod> SortiranjeLogika(string sortN, string sortC, string sortD)
         {
             List<Proizvod> retV = new List<Proizvod>();
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
@@ -696,7 +711,7 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Brisanje proizvoda od strane prodavca
+        // Funkcija za brisanje proizvoda od strane prodavca
         [HttpDelete]
         [Route("api/korisnici/brisanje")]
         public IHttpActionResult Brisanje([FromBody] JObject data)
@@ -706,7 +721,7 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
-                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(naziv) && (Proizvodi.ListaProizvoda[i].Dostupan.Contains("Da") || Proizvodi.ListaProizvoda[i].Dostupan.Contains("da")))
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv) && (Proizvodi.ListaProizvoda[i].Dostupan.Contains("Da") || Proizvodi.ListaProizvoda[i].Dostupan.Contains("da")))
                 {
                     Proizvodi.ListaProizvoda.Remove(Proizvodi.ListaProizvoda[i]);
                     br++;
@@ -718,7 +733,7 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < x[0].ObjavljeniProizvodi.Count; i++)
             {
-                if (x[0].ObjavljeniProizvodi[i].Naziv.Contains(naziv) && (x[0].ObjavljeniProizvodi[i].Dostupan.Contains("Da") || x[0].ObjavljeniProizvodi[i].Dostupan.Contains("da")))
+                if (x[0].ObjavljeniProizvodi[i].Naziv.Equals(naziv) && (x[0].ObjavljeniProizvodi[i].Dostupan.Contains("Da") || x[0].ObjavljeniProizvodi[i].Dostupan.Contains("da")))
                 {
                     x[0].ObjavljeniProizvodi.Remove(x[0].ObjavljeniProizvodi[i]);
                 }
@@ -736,11 +751,10 @@ namespace Web_Shop.Controllers
                 Data = x[0].ObjavljeniProizvodi,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Brisanje proizvoda od strane admina
+        // Funkcija za brisanje proizvoda od strane admina
         [HttpDelete]
         [Route("api/korisnici/brisanjeProizvodaAdmin")]
         public IHttpActionResult BrisanjeProizvodaAdmin([FromBody] JObject data)
@@ -751,7 +765,7 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
-                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(naziv))
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv))
                 {
                     Proizvodi.ListaProizvoda.Remove(Proizvodi.ListaProizvoda[i]);
                     br++;
@@ -762,53 +776,45 @@ namespace Web_Shop.Controllers
             {
                 for (int j = 0; j < Globals.Korisnici[i].ObjavljeniProizvodi.Count; j++)
                 {
-                    if (Globals.Korisnici[i].ObjavljeniProizvodi[j].Naziv.Contains(naziv))
+                    if (Globals.Korisnici[i].ObjavljeniProizvodi[j].Naziv.Equals(naziv))
                     {
                         Globals.Korisnici[i].ObjavljeniProizvodi.Remove(Globals.Korisnici[i].ObjavljeniProizvodi[j]);
                     }
                 }
 
-                for (int j = 0; j < Globals.Korisnici[i].OmiljeniProizvodi.Count; j++)
-                {
-                    if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Contains(naziv))
-                    {
-                        Globals.Korisnici[i].OmiljeniProizvodi.Remove(Globals.Korisnici[i].OmiljeniProizvodi[j]);
-                    }
-                }
-
-                for (int k = 0; k < Globals.Korisnici[i].Porudzbine.Count; k++)
-                {
-                    if (Globals.Korisnici[i].Porudzbine[k].Proizvod.Naziv.Contains(naziv))
-                    {
-                        Globals.Korisnici[i].Porudzbine.Remove(Globals.Korisnici[i].Porudzbine[k]);
-                    }
-                }
+                //for (int j = 0; j < Globals.Korisnici[i].OmiljeniProizvodi.Count; j++)
+                //{
+                //    if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Contains(naziv))
+                //    {
+                //        Globals.Korisnici[i].OmiljeniProizvodi.Remove(Globals.Korisnici[i].OmiljeniProizvodi[j]);
+                //    }
+                //}
             }
 
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
 
-
             if (br == 0)
             {
                 return BadRequest("Brisanje nije moguće !!");
             }
-
             return Ok();
         }
 
-        // Brisanje korisnika od strane admina
+        // Funkcija za brisanje korisnika od strane admina
         [HttpDelete]
         [Route("api/korisnici/brisanjeKorisnikaAdmin")]
         public IHttpActionResult BrisanjeKorisnika([FromBody] JObject data)
         {
             string ime = data.GetValue("naziv").ToString();
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
+            List<Proizvod> temp = new List<Proizvod>();
 
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
                 if (Globals.Korisnici[i].Ime.Equals(ime) && Globals.Korisnici[i].Uloga == Uloge.Prodavac)
                 {
+                    temp = Globals.Korisnici[i].ObjavljeniProizvodi;
                     Globals.Korisnici.Remove(Globals.Korisnici[i]);
                 }
             }
@@ -834,13 +840,23 @@ namespace Web_Shop.Controllers
                 }
             }
 
+            for (int k = 0; k < temp.Count; k++)
+            {
+                for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
+                {
+                    if (Proizvodi.ListaProizvoda[i].Naziv.Equals(temp[k].Naziv))
+                    {
+                        Proizvodi.ListaProizvoda.Remove(Proizvodi.ListaProizvoda[i]);
+                    }
+                }
+            }
+
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
-
             return Ok();
         }
 
-        // Priprema za Izmenu proizvoda
+        // Funkcija koja služi kao priprema za neku izmenu
         [HttpPost]
         [Route("api/korisnici/pripremaZaIzmenu")]
         public IHttpActionResult PripremaIzmene([FromBody] JObject data)
@@ -850,7 +866,7 @@ namespace Web_Shop.Controllers
             return Ok();
         }
 
-        // Preuzimanje podataka o proizvodu koji se menja kod prodavca
+        // Funkcija za preuzimanje podataka o proizvodu koji se menja kod prodavca
         [HttpGet]
         [Route("api/korisnici/preuzmiIzmenu")]
         public IHttpActionResult PreuzmiIzmenu()
@@ -862,7 +878,7 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < x[0].ObjavljeniProizvodi.Count; i++)
             {
-                if (x[0].ObjavljeniProizvodi[i].Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                if (x[0].ObjavljeniProizvodi[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                 {
                     temp = x[0].ObjavljeniProizvodi[i];
                 }
@@ -878,11 +894,10 @@ namespace Web_Shop.Controllers
                 Data = temp,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Preuzimanje podataka o proizvodu koji se menja kod admina
+        // Funkcija za preuzimanje podataka o proizvodu koji se menja kod admina
         [HttpGet]
         [Route("api/korisnici/preuzmiIzmenuAdmin")]
         public IHttpActionResult IzmenaAdmin()
@@ -893,7 +908,7 @@ namespace Web_Shop.Controllers
 
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
-                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                 {
                     temp = Proizvodi.ListaProizvoda[i];
                 }
@@ -909,12 +924,11 @@ namespace Web_Shop.Controllers
                 Data = temp,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Izmena status porudžbine od strane Kupca
-        [HttpPost]
+        // Funkcija za izmenu status porudžbine od strane kupca
+        [HttpPut]
         [Route("api/korisnici/izmeniStatus")]
         public IHttpActionResult IzmeniStatus([FromBody] JObject data)
         {
@@ -926,7 +940,7 @@ namespace Web_Shop.Controllers
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
                 Korisnik k = Globals.Korisnici[i];
-                if (k.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
                     for (int j = 0; j < k.Porudzbine.Count; j++)
                     {
@@ -934,7 +948,7 @@ namespace Web_Shop.Controllers
                         {
                             return BadRequest("Nemate pravo da izmenite status !!");
                         }
-                        if (k.Porudzbine[j].Status == Statusi.AKTIVNA && k.Porudzbine[j].Proizvod.Naziv.Contains(naziv))
+                        if (k.Porudzbine[j].Status == Statusi.AKTIVNA && k.Porudzbine[j].Proizvod.Naziv.Equals(naziv))
                         {
                             Globals.Prijavljen.Porudzbine[j].Status = Statusi.IZVRŠEN;
                             Globals.Korisnici[i].Porudzbine[j].Status = Statusi.IZVRŠEN;
@@ -945,12 +959,11 @@ namespace Web_Shop.Controllers
 
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
             return Ok();
         }
 
-        // Izmena status porudžbine od strane admina na izvršeno
-        [HttpPost]
+        // Funkcija za izmenu status porudžbine od strane admina na izvršeno
+        [HttpPut]
         [Route("api/korisnici/statusIzvrsen")]
         public IHttpActionResult StatusIzvrsen([FromBody] JObject data)
         {
@@ -962,7 +975,7 @@ namespace Web_Shop.Controllers
                 Korisnik k = Globals.Korisnici[i];
                 for (int j = 0; j < k.Porudzbine.Count; j++)
                 {
-                    if (k.Porudzbine[j].Proizvod.Naziv.Contains(naziv))
+                    if (k.Porudzbine[j].Proizvod.Naziv.Equals(naziv))
                     {
                         Globals.Korisnici[i].Porudzbine[j].Status = Statusi.IZVRŠEN;
                     }
@@ -970,18 +983,17 @@ namespace Web_Shop.Controllers
             }
 
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
             return Ok();
         }
 
-        // Izmena status porudžbine od strane admina na otkazan
-        [HttpPost]
+        // Funkcija za izmenu status porudžbine od strane admina na otkazan
+        [HttpPut]
         [Route("api/korisnici/statusOtkazan")]
         public IHttpActionResult StatusOtkazan([FromBody] JObject data)
         {
             string naziv = data.GetValue("naziv").ToString();
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
-            int kolicina = 0;
+            int brojac = 0;
             bool status = false;
             Porudzbina pomoc = new Porudzbina();
 
@@ -990,17 +1002,17 @@ namespace Web_Shop.Controllers
                 Korisnik k = Globals.Korisnici[i];
                 for (int j = 0; j < k.Porudzbine.Count; j++)
                 {
-                    if (k.Porudzbine[j].Proizvod.Naziv.Contains(naziv) && (k.Porudzbine[j].Status == Statusi.IZVRŠEN || k.Porudzbine[j].Status == Statusi.OTKAZAN))
+                    if (k.Porudzbine[j].Proizvod.Naziv.Equals(naziv) && (k.Porudzbine[j].Status == Statusi.IZVRŠEN || k.Porudzbine[j].Status == Statusi.OTKAZAN))
                     {
                         return BadRequest("Status je Izvršen ili Otkazan, nemate pravo da izmenite status !!");
                     }
 
-                    if (k.Porudzbine[j].Proizvod.Naziv.Contains(naziv) && k.Porudzbine[j].Status == Statusi.AKTIVNA)
+                    if (k.Porudzbine[j].Proizvod.Naziv.Equals(naziv) && k.Porudzbine[j].Status == Statusi.AKTIVNA)
                     {
                         Globals.Korisnici[i].Porudzbine[j].Status = Statusi.OTKAZAN;
-                        kolicina = Globals.Korisnici[i].Porudzbine[j].Kolicina;
                         pomoc = Globals.Korisnici[i].Porudzbine[j];
                         status = true;
+                        brojac++;
                     }
                 }
             }
@@ -1010,14 +1022,14 @@ namespace Web_Shop.Controllers
             {
                 if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv) && status == true)
                 {
-                    Proizvodi.ListaProizvoda[i].Kolicina += kolicina;
+                    Proizvodi.ListaProizvoda[i].Kolicina += brojac;
                     br++;
                 }
             }
 
             if (br == 0)
             {
-                pomoc.Proizvod.Kolicina += kolicina;
+                pomoc.Proizvod.Kolicina = brojac;
                 if (pomoc.Proizvod.Kolicina > 0)
                     pomoc.Proizvod.Dostupan = "Da";
                 Proizvodi.ListaProizvoda.Add(pomoc.Proizvod);
@@ -1025,11 +1037,10 @@ namespace Web_Shop.Controllers
 
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
-
             return Ok();
         }
 
-        // Dodavanje recenzije od strane Kupca
+        // Funkcija za dodavanje recenzije od strane kupca
         [HttpPost]
         [Route("api/korisnici/dodajRecenziju")]
         public IHttpActionResult DodajRecenziju([FromBody] JObject data)
@@ -1037,24 +1048,38 @@ namespace Web_Shop.Controllers
             string naziv = data.GetValue("naziv").ToString();
             string naslov = data.GetValue("naslov").ToString();
             string opis = data.GetValue("opis").ToString();
+            string slika = data.GetValue("slika").ToString();
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
             Globals.Prijavljen = x[0];
+            Recenzija recenzija = null;
 
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
                 Korisnik k = Globals.Korisnici[i];
-                if (k.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
                     for (int j = 0; j < k.Porudzbine.Count; j++)
                     {
-                        if (k.Porudzbine[j].Status != Statusi.IZVRŠEN)
+                        if (k.Porudzbine[j].Proizvod.Naziv.Contains(naziv) && k.Porudzbine[j].Status != Statusi.IZVRŠEN)
                         {
                             return BadRequest("Nemate pravo da dodate recenziju !!");
                         }
                         if (k.Porudzbine[j].Status == Statusi.IZVRŠEN && k.Porudzbine[j].Proizvod.Naziv.Contains(naziv))
                         {
-                            Recenzija recenzija = new Recenzija(Globals.Prijavljen.Porudzbine[j].Proizvod.Naziv, Globals.Prijavljen.KorisnickoIme, naslov, opis, Globals.Prijavljen.Porudzbine[j].Proizvod.Slika);
+                            if (k.Porudzbine[j].Proizvod.Recenzije.Count >= 2)
+                            {
+                                return BadRequest("Već imate recenziju !!");
+                            }
+                            if (slika == "")
+                            {
+                                recenzija = new Recenzija(Globals.Prijavljen.Porudzbine[j].Proizvod.Naziv, Globals.Prijavljen.KorisnickoIme, naslov, opis, Globals.Prijavljen.Porudzbine[j].Proizvod.Slika);
+                            }
+                            else
+                            {
+                                string novaSlika = PromenaPutanjeSlike(slika);
+                                recenzija = new Recenzija(Globals.Prijavljen.Porudzbine[j].Proizvod.Naziv, Globals.Prijavljen.KorisnickoIme, naslov, opis, novaSlika);
+                            }
                             Globals.Prijavljen.Porudzbine[j].Proizvod.Recenzije.Add(recenzija);
                             Globals.Korisnici[i].Porudzbine[j].Proizvod.Recenzije.Add(recenzija);
                         }
@@ -1062,13 +1087,36 @@ namespace Web_Shop.Controllers
                 }
             }
 
+            for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
+            {
+                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(naziv) && recenzija != null)
+                {
+                    Proizvodi.ListaProizvoda[i].Recenzije.Add(recenzija);
+                }
+            }
+
+            for (int i = 0; i < Globals.Korisnici.Count; i++)
+            {
+                Korisnik k = Globals.Korisnici[i];
+                if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
+                {
+                    for (int j = 0; j < k.ObjavljeniProizvodi.Count; j++)
+                    {
+                        if (k.ObjavljeniProizvodi[j].Naziv.Contains(naziv) && recenzija != null)
+                        {
+                            k.ObjavljeniProizvodi[j].Recenzije.Add(recenzija);
+                        }
+                    }
+                }
+            }
+
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
+            file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
             return Ok();
         }
 
-        // Izmena proizvoda kod prodavca
+        // Funkcija za izmenu proizvoda kod prodavca
         [HttpPut]
         [Route("api/korisnici/Izmena")]
         public IHttpActionResult Izmena([FromBody] JObject data)
@@ -1084,54 +1132,96 @@ namespace Web_Shop.Controllers
             Proizvod proizvod = new Proizvod(naziv, cena, kolicina, opis, slika, datum, grad, dostupan);
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
             List<string> pom = file.DeSerializeObject<List<string>>("Naziv.xml");
+            Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
             Globals.NazivProizvodaZaIzmenu = pom[0];
 
             for (int i = 0; i < x[0].ObjavljeniProizvodi.Count; i++)
             {
-                if (x[0].ObjavljeniProizvodi[i].Naziv.Contains(Globals.NazivProizvodaZaIzmenu) && (x[0].ObjavljeniProizvodi[i].Dostupan.Contains("Da") || x[0].ObjavljeniProizvodi[i].Dostupan.Contains("da")))
+                if (x[0].ObjavljeniProizvodi[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu) && (x[0].ObjavljeniProizvodi[i].Dostupan.Contains("Da") || x[0].ObjavljeniProizvodi[i].Dostupan.Contains("da")))
                 {
-                    proizvod.Slika = SaveImage(proizvod.Slika);
-                    if (proizvod.Dostupan.Contains("da") || proizvod.Dostupan.Contains("ne"))
+                    if (proizvod.Slika != "")
+                    {
+                        proizvod.Slika = PromenaPutanjeSlike(proizvod.Slika);
+                    }
+                    else
+                    {
+                        proizvod.Slika = x[0].ObjavljeniProizvodi[i].Slika;
+                    }
+
+                    if (proizvod.Dostupan.Equals("da") || proizvod.Dostupan.Equals("ne"))
                     {
                         proizvod.Dostupan = char.ToUpper(proizvod.Dostupan[0]) + proizvod.Dostupan.Substring(1);
                     }
+                    proizvod.Recenzije = x[0].ObjavljeniProizvodi[i].Recenzije;
                     x[0].ObjavljeniProizvodi[i] = proizvod;
                 }
             }
 
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
-                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(Globals.NazivProizvodaZaIzmenu) && (Proizvodi.ListaProizvoda[i].Dostupan.Contains("Da") || Proizvodi.ListaProizvoda[i].Dostupan.Contains("da")))
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu) && (Proizvodi.ListaProizvoda[i].Dostupan.Contains("Da") || Proizvodi.ListaProizvoda[i].Dostupan.Contains("da")))
                 {
                     Proizvodi.ListaProizvoda[i] = proizvod;
                 }
             }
 
-            file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
-            file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
+            for (int i = 0; i < Globals.Korisnici.Count; i++)
+            {
+                Korisnik k = Globals.Korisnici[i];
 
+                if (k.KorisnickoIme.Equals(x[0].KorisnickoIme))
+                {
+                    for (int j = 0; j < k.ObjavljeniProizvodi.Count; j++)
+                    {
+                        if (k.ObjavljeniProizvodi[j].Naziv.Equals(Globals.NazivProizvodaZaIzmenu) && (k.ObjavljeniProizvodi[j].Dostupan.Contains("Da") || k.ObjavljeniProizvodi[j].Dostupan.Contains("da")))
+                        {
+                            k.ObjavljeniProizvodi[j] = proizvod;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < x[0].ObjavljeniProizvodi.Count; i++)
+            {
+                if (x[0].ObjavljeniProizvodi[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu) && (x[0].ObjavljeniProizvodi[i].Dostupan.Contains("Ne") || x[0].ObjavljeniProizvodi[i].Dostupan.Contains("ne")))
+                {
+                    return BadRequest("Proizvod nije dostupan!! Izmena nije moguća!!");
+                }
+            }
+
+            file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
+            file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
+            file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
             return Ok();
         }
 
-        // Izmena proizvoda kod admin
+        // Funkcija za izmenu proizvoda kod admin
         [HttpPut]
         [Route("api/korisnici/IzmenaProizvodaAdmin")]
         public IHttpActionResult IzmenaProizvodaAdmin(Proizvod p)
         {
-            List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
             List<string> pom = file.DeSerializeObject<List<string>>("Naziv.xml");
             Globals.NazivProizvodaZaIzmenu = pom[0];
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
+            p.Recenzije = new List<Recenzija>();
 
             for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
             {
-                if (Proizvodi.ListaProizvoda[i].Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                 {
-                    p.Slika = SaveImage(p.Slika);
+                    if (p.Slika != "")
+                    {
+                        p.Slika = PromenaPutanjeSlike(p.Slika);
+                    }
+                    else
+                    {
+                        p.Slika = Proizvodi.ListaProizvoda[i].Slika;
+                    }
                     if (p.Dostupan.Contains("da") || p.Dostupan.Contains("ne"))
                     {
                         p.Dostupan = char.ToUpper(p.Dostupan[0]) + p.Dostupan.Substring(1);
                     }
+                    p.Recenzije.Add(new Recenzija("", "", "", "Nema recenzije!", ""));
                     Proizvodi.ListaProizvoda[i] = p;
                 }
             }
@@ -1140,26 +1230,43 @@ namespace Web_Shop.Controllers
             {
                 for (int j = 0; j < Globals.Korisnici[i].ObjavljeniProizvodi.Count; j++)
                 {
-                    if (Globals.Korisnici[i].ObjavljeniProizvodi[j].Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                    if (Globals.Korisnici[i].ObjavljeniProizvodi[j].Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                     {
-                        p.Slika = SaveImage(p.Slika);
+                        if (p.Slika != "")
+                        {
+                            p.Slika = PromenaPutanjeSlike(p.Slika);
+                        }
+                        else
+                        {
+                            p.Slika = Globals.Korisnici[i].ObjavljeniProizvodi[j].Slika;
+                        }
+
                         if (p.Dostupan.Contains("da") || p.Dostupan.Contains("ne"))
                         {
                             p.Dostupan = char.ToUpper(p.Dostupan[0]) + p.Dostupan.Substring(1);
                         }
+                        p.Recenzije.Add(new Recenzija("", "", "", "Nema recenzije!", ""));
                         Globals.Korisnici[i].ObjavljeniProizvodi[j] = p;
                     }
                 }
 
                 for (int j = 0; j < Globals.Korisnici[i].OmiljeniProizvodi.Count; j++)
                 {
-                    if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                    if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                     {
-                        p.Slika = SaveImage(p.Slika);
+                        if (p.Slika != "")
+                        {
+                            p.Slika = PromenaPutanjeSlike(p.Slika);
+                        }
+                        else
+                        {
+                            p.Slika = Globals.Korisnici[i].OmiljeniProizvodi[j].Slika;
+                        }
                         if (p.Dostupan.Contains("da") || p.Dostupan.Contains("ne"))
                         {
                             p.Dostupan = char.ToUpper(p.Dostupan[0]) + p.Dostupan.Substring(1);
                         }
+                        p.Recenzije.Add(new Recenzija("", "", "", "Nema recenzije!", ""));
                         Globals.Korisnici[i].OmiljeniProizvodi[j] = p;
                     }
                 }
@@ -1167,11 +1274,10 @@ namespace Web_Shop.Controllers
 
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
             return Ok();
         }
 
-        // Prikaz poadataka o recenziji na stranici za izmenu kod kupca
+        // Funkcija za prikaz poadataka o recenziji na stranici za izmenu kod kupca
         [HttpGet]
         [Route("api/korisnici/preuzmiRecenziju")]
         public IHttpActionResult PreuzmiRecenziju()
@@ -1185,7 +1291,7 @@ namespace Web_Shop.Controllers
 
             foreach (Porudzbina p in Globals.Prijavljen.Porudzbine)
             {
-                if (p.Proizvod.Naziv.Contains(Globals.NazivProizvodaZaIzmenu) && p.Proizvod.Recenzije.Count > 1)
+                if (p.Proizvod.Naziv.Equals(Globals.NazivProizvodaZaIzmenu) && p.Proizvod.Recenzije.Count > 1)
                 {
                     retV = p.Proizvod.Recenzije[p.Proizvod.Recenzije.Count - 1];
                 }
@@ -1196,33 +1302,39 @@ namespace Web_Shop.Controllers
                 Data = retV,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
-        // Izmena recenzije od strane kupca
+        // Funkcija za izmenu recenzije kod kupca
         [HttpPut]
         [Route("api/korisnici/izmenaRecenzije")]
         public IHttpActionResult IzmenaRecenzije([FromBody] JObject data)
         {
             string naslov = data.GetValue("naslov").ToString();
             string opis = data.GetValue("opis").ToString();
+            string slika = data.GetValue("slika").ToString();
             List<string> pom = file.DeSerializeObject<List<string>>("Naziv.xml");
             Globals.NazivProizvodaZaIzmenu = pom[0];
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
             Globals.Prijavljen = x[0];
             Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
 
-            string slika = "";
             foreach (Korisnik k in Globals.Korisnici)
             {
-                if (k.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
                     foreach (Porudzbina p in k.Porudzbine)
                     {
-                        if (p.Proizvod.Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                        if (p.Proizvod.Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                         {
-                            slika = p.Proizvod.Slika;
+                            if (slika == "")
+                            {
+                                slika = p.Proizvod.Slika;
+                            }
+                            else
+                            {
+                                slika = PromenaPutanjeSlike(slika);
+                            }
                         }
                     }
                 }
@@ -1233,7 +1345,7 @@ namespace Web_Shop.Controllers
             for (int i = 0; i < Globals.Prijavljen.Porudzbine.Count; i++)
             {
                 Porudzbina p = Globals.Prijavljen.Porudzbine[i];
-                if (p.Proizvod.Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                if (p.Proizvod.Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                 {
                     p.Proizvod.Recenzije[p.Proizvod.Recenzije.Count - 1] = r;
                 }
@@ -1242,11 +1354,11 @@ namespace Web_Shop.Controllers
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
                 Korisnik k = Globals.Korisnici[i];
-                if (k.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
                     foreach (Porudzbina p in k.Porudzbine)
                     {
-                        if (p.Proizvod.Naziv.Contains(Globals.NazivProizvodaZaIzmenu))
+                        if (p.Proizvod.Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
                         {
                             p.Proizvod.Recenzije[p.Proizvod.Recenzije.Count - 1] = r;
                         }
@@ -1254,13 +1366,21 @@ namespace Web_Shop.Controllers
                 }
             }
 
+            for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
+            {
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(Globals.NazivProizvodaZaIzmenu))
+                {
+                    Proizvodi.ListaProizvoda[i].Recenzije[Proizvodi.ListaProizvoda[i].Recenzije.Count - 1] = r;
+                }
+            }
+
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
+            file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
             return Ok();
         }
 
-        // Brisanje recenzije od strane kupca
+        // Funkcija za brisanje recenzije od strane kupca
         [HttpDelete]
         [Route("api/korisnici/brisanjeRecenzije")]
         public IHttpActionResult BrisanjeRecenzije([FromBody] JObject data)
@@ -1273,7 +1393,7 @@ namespace Web_Shop.Controllers
             for (int i = 0; i < Globals.Prijavljen.Porudzbine.Count; i++)
             {
                 Porudzbina p = Globals.Prijavljen.Porudzbine[i];
-                if (p.Proizvod.Naziv.Contains(naziv))
+                if (p.Proizvod.Naziv.Equals(naziv))
                 {
                     if (p.Proizvod.Recenzije.Count > 1)
                     {
@@ -1289,11 +1409,11 @@ namespace Web_Shop.Controllers
             for (int i = 0; i < Globals.Korisnici.Count; i++)
             {
                 Korisnik k = Globals.Korisnici[i];
-                if (k.KorisnickoIme.Contains(Globals.Prijavljen.KorisnickoIme))
+                if (k.KorisnickoIme.Equals(Globals.Prijavljen.KorisnickoIme))
                 {
                     foreach (Porudzbina p in k.Porudzbine)
                     {
-                        if (p.Proizvod.Naziv.Contains(naziv))
+                        if (p.Proizvod.Naziv.Equals(naziv))
                         {
                             if (p.Proizvod.Recenzije.Count > 1)
                             {
@@ -1310,12 +1430,11 @@ namespace Web_Shop.Controllers
 
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
             file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
-
             return Ok();
         }
 
         // Funkcija koja menja putanju slike
-        private string SaveImage(string path)
+        private string PromenaPutanjeSlike(string path)
         {
             if (path.Contains("Pictures\\"))
             {
@@ -1329,13 +1448,91 @@ namespace Web_Shop.Controllers
             }
         }
 
-        // Odjava sa profila
+        // Funkcija koja menja status recenzije kod admina
+        [HttpPut]
+        [Route("api/korisnici/odobriRecenziju")]
+        public IHttpActionResult OdobriRecenziju([FromBody] JObject data)
+        {
+            string naziv = data.GetValue("naziv").ToString();
+            Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
+
+            for (int i = 0; i < Globals.Korisnici.Count; i++)
+            {
+                Korisnik k = Globals.Korisnici[i];
+                for (int j = 0; j < k.ObjavljeniProizvodi.Count; j++)
+                {
+                    if (k.ObjavljeniProizvodi[j].Naziv.Equals(naziv))
+                    {
+                        for (int l = 0; l < k.ObjavljeniProizvodi[j].Recenzije.Count; l++)
+                        {
+                            k.ObjavljeniProizvodi[j].Recenzije[l].Prikazi = true;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
+            {
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv))
+                {
+                    for (int j = 0; j < Proizvodi.ListaProizvoda[i].Recenzije.Count; j++)
+                    {
+                        Proizvodi.ListaProizvoda[i].Recenzije[j].Prikazi = true;
+                    }
+                }
+            }
+
+            file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
+            file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
+            return Ok();
+        }
+
+        // Funkcija koja menja status recenzije kod admina
+        [HttpPut]
+        [Route("api/korisnici/odbijRecenziju")]
+        public IHttpActionResult OdbijRecenziju([FromBody] JObject data)
+        {
+            string naziv = data.GetValue("naziv").ToString();
+            Globals.Korisnici = file.DeSerializeObject<List<Korisnik>>("Korisnici.xml");
+
+            for (int i = 0; i < Globals.Korisnici.Count; i++)
+            {
+                Korisnik k = Globals.Korisnici[i];
+                for (int j = 0; j < k.ObjavljeniProizvodi.Count; j++)
+                {
+                    if (k.ObjavljeniProizvodi[j].Naziv.Equals(naziv))
+                    {
+                        for (int l = 0; l < k.ObjavljeniProizvodi[j].Recenzije.Count; l++)
+                        {
+                            k.ObjavljeniProizvodi[j].Recenzije[l].SamoAdmin = true;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < Proizvodi.ListaProizvoda.Count; i++)
+            {
+                if (Proizvodi.ListaProizvoda[i].Naziv.Equals(naziv))
+                {
+                    for (int j = 0; j < Proizvodi.ListaProizvoda[i].Recenzije.Count; j++)
+                    {
+                        Proizvodi.ListaProizvoda[i].Recenzije[j].SamoAdmin = true;
+                    }
+                }
+            }
+
+            file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
+            file.SerializeObject<List<Korisnik>>(Globals.Korisnici, "Korisnici.xml");
+            return Ok();
+        }
+
+        // Funkcija koja služi za odjavu sa profila
         [HttpPost]
         [Route("api/korisnici/odjava")]
         public IHttpActionResult Odjava()
         {
-            string filePathP = GetProjectLocation() + "bin\\Debug\\Pomoc.xml";
-            string filePathN = GetProjectLocation() + "bin\\Debug\\Naziv.xml";
+            string filePathP = PutanjaDoProjekta() + "bin\\Debug\\Pomoc.xml";
+            string filePathN = PutanjaDoProjekta() + "bin\\Debug\\Naziv.xml";
             try
             {
                 File.Delete(filePathP);
@@ -1349,7 +1546,7 @@ namespace Web_Shop.Controllers
         }
 
         // Funkcija koja vraća putanju do projekta
-        private string GetProjectLocation()
+        private string PutanjaDoProjekta()
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             return baseDirectory;

@@ -7,22 +7,21 @@ namespace Web_Shop.Controllers
 {
     public class ProizvodiController : ApiController
     {
-        // Funkcija koja vraća sve proizvode
-        public List<Proizvod> GetAllProizvodi()
+        // Funkcija koja vraća sve proizvode za prikaz
+        public IHttpActionResult GetAllProizvodi()
         {
-            return Proizvodi.ListaProizvoda;
+            return Json(Proizvodi.ListaProizvoda);
         }
 
-        // Pretraga proizvoda na početnoj stranici
+        // Funkcija za pretragu proizvoda na početnoj stranici
         [HttpGet]
         [Route("api/proizvodi/search")]
-        public IHttpActionResult SearchProducts(string naziv, string grad, double? minCena, double? maxCena)
+        public IHttpActionResult PretragaProizvoda(string naziv, string grad, double? minCena, double? maxCena)
         {
-            List<Proizvod> result = SearchLogic(naziv, grad, minCena, maxCena);
-
+            List<Proizvod> result = LogikaPretrage(naziv, grad, minCena, maxCena);
             return Json(result);
         }
-        private List<Proizvod> SearchLogic(string naziv, string grad, double? minCena, double? maxCena)
+        private List<Proizvod> LogikaPretrage(string naziv, string grad, double? minCena, double? maxCena)
         {
             List<Proizvod> retV = new List<Proizvod>();
             foreach (Proizvod p in Proizvodi.ListaProizvoda)
@@ -52,16 +51,15 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Sortiranje proizvoda na početnoj stranici
+        // Funkcija za sortiranje proizvoda na početnoj stranici
         [HttpGet]
         [Route("api/proizvodi/sort")]
-        public IHttpActionResult SortProducts(string sortN, string sortC, string sortD)
+        public IHttpActionResult SortiranjeProizvoda(string sortN, string sortC, string sortD)
         {
-            List<Proizvod> result = SortLogic(sortN, sortC, sortD);
-
+            List<Proizvod> result = LogikaSortiranja(sortN, sortC, sortD);
             return Json(result);
         }
-        private List<Proizvod> SortLogic(string sortN, string sortC, string sortD)
+        private List<Proizvod> LogikaSortiranja(string sortN, string sortC, string sortD)
         {
             List<Proizvod> retV = new List<Proizvod>();
 
@@ -101,28 +99,27 @@ namespace Web_Shop.Controllers
             return retV;
         }
 
-        // Dodavanje proizvoda u sistem
+        // Funkcija za dodavanje proizvoda u sistem od strane prodavca
         [HttpPost]
         [Route("api/proizvodi/dodaj")]
         public IHttpActionResult Dodaj(Proizvod p)
         {
-            string filePath = SaveImage(p.Slika);
+            p.Recenzije = new List<Recenzija>();
+            string filePath = PromenaPutanjeSlike(p.Slika);
             p.Slika = filePath;
-
             if (p != null)
             {
                 if (p.Kolicina > 0)
                     p.Dostupan = "Da";
                 if (p.Kolicina == 0)
                     p.Dostupan = "Ne";
+                p.Recenzije.Add(new Recenzija("", "", "", "Nema recenzije!", ""));
                 Proizvodi.ListaProizvoda.Add(p);
             }
-
             XML file = new XML();
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
 
             List<Korisnik> x = file.DeSerializeObject<List<Korisnik>>("Pomoc.xml");
-
             if (p != null)
             {
                 if (p.Kolicina > 0)
@@ -131,25 +128,22 @@ namespace Web_Shop.Controllers
                     p.Dostupan = "Ne";
                 x[0].ObjavljeniProizvodi.Add(p);
             }
-
             file.SerializeObject<List<Korisnik>>(x, "Pomoc.xml");
 
             if (p == null)
             {
                 return BadRequest("Dodavanje nije moguće !!");
             }
-
             var response = new
             {
                 Data = x[0].ObjavljeniProizvodi,
                 Message = "Uspešno!"
             };
-
             return Json(response);
         }
 
         // Funkcija koja menja putanju slike
-        private string SaveImage(string path)
+        private string PromenaPutanjeSlike(string path)
         {
             string[] s = path.Split('\\'); //base64Image.Replace("C:\\fakepath\\", filePath);
             return "Pictures\\" + s[2];

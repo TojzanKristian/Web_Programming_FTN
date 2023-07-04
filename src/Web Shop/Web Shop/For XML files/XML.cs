@@ -21,7 +21,7 @@ namespace Web_Shop
                     serializer.Serialize(stream, serializableObject);
                     stream.Position = 0;
                     xmlDocument.Load(stream);
-                    string path = GetProjectLocation();
+                    string path = PutanjaDoProjekta();
                     xmlDocument.Save(path + "bin\\Debug\\" + fileName);
                     stream.Close();
                 }
@@ -45,7 +45,7 @@ namespace Web_Shop
                 string attributeXml = string.Empty;
 
                 XmlDocument xmlDocument = new XmlDocument();
-                string path = GetProjectLocation();
+                string path = PutanjaDoProjekta();
                 xmlDocument.Load(path + "bin\\Debug\\" + fileName);
                 string xmlString = xmlDocument.OuterXml;
 
@@ -73,7 +73,7 @@ namespace Web_Shop
         #endregion
 
         #region Nalaženje putanje do projekta
-        private string GetProjectLocation()
+        private string PutanjaDoProjekta()
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             return baseDirectory;
