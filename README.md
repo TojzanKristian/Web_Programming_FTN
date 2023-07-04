@@ -32,8 +32,8 @@
 ![Admin](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/cb4737ed-655a-4fda-be68-7e2c019966ec)
 
 ## Used technologies :
-1. _HTML (HyperText Markup Language)_ - it is used as the basis for pages
-2. _CSS (Cascading Style Sheets)_ - the background and style of pages
-3. _JavaScript and jQuery_ - for communication with server and validation
+1. _HTML (HyperText Markup Language)_ - used as a template and basis for web pages
+2. _CSS (Cascading Style Sheets)_ - the background and style of web pages
+3. _JavaScript and jQuery_ - for communication with server (ASP.NET Web API) and validation at data entry
 4. _ASP.NET Web API_ - backend implemented in C#
-5. _XML files_ - as a database for data storage
+5. _XML files_ - is used to simulate a database, temporary storage of data
