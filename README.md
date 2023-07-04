@@ -20,12 +20,16 @@
 ![Registracija](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/5fc5df53-e5eb-4e82-aa12-bf8414f84243)
 
 * **Personal information display page :**
+![Profil](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/7bf06b11-e188-4a3b-9858-eec84c52fd39)
 
 * **Customer page :**
+![Kupac](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/2a1aff70-27c2-4b2a-b6fc-360584cb9444)
 
 * **Seller page :**
+![Prodavac](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/cc175e8d-45cc-4260-b8ae-92d077e992a3)
 
 * **Administrator page :**
+![Admin](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/cb4737ed-655a-4fda-be68-7e2c019966ec)
 
 ## Used technologies :
 1. _HTML (HyperText Markup Language)_ - it is used as the basis for pages
