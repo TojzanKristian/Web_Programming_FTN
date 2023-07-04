@@ -11,10 +11,13 @@
 
 ## Presentation of the pages in the form of images :
 * **Homepage :**
+![Pocetna](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/20d4f831-924c-490a-b0de-abc0042b35a9)
 
 * **Login page :**
+![Prijava](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/dea1bd48-7885-48b2-b822-b79f698272d9)
 
 * **Registration page :**
+![Registracija](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/5fc5df53-e5eb-4e82-aa12-bf8414f84243)
 
 * **Personal information display page :**
 
