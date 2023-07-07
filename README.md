@@ -12,6 +12,7 @@
 ## Presentation of the pages in the form of images :
 * **Homepage :**
 ![Pocetna](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/20d4f831-924c-490a-b0de-abc0042b35a9)
+![Pocetna2](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/c339cf6b-e59d-4f95-8d4e-1f6af053696d)
 
 * **Login page :**
 ![Prijava](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/dea1bd48-7885-48b2-b822-b79f698272d9)
@@ -24,12 +25,16 @@
 
 * **Customer page :**
 ![Kupac](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/2a1aff70-27c2-4b2a-b6fc-360584cb9444)
+![Kupac2](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/5a79582c-efac-4935-8052-b2ab21598b57)
 
 * **Seller page :**
 ![Prodavac](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/cc175e8d-45cc-4260-b8ae-92d077e992a3)
+![Prodavac2](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/78febaae-0eda-497e-a914-bd871256c0d8)
 
 * **Administrator page :**
 ![Admin](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/cb4737ed-655a-4fda-be68-7e2c019966ec)
+![Admin2](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/171b200f-6350-42da-89cd-55befae95430)
+![Admin3](https://github.com/TojzanKristian/Web_Programming_FTN/assets/116062572/5bb27a15-0c06-4dd1-886f-e6872ff7a7b7)
 
 ## Used technologies :
 1. _HTML (HyperText Markup Language)_ - used as a template and basis for web pages
