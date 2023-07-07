@@ -782,13 +782,14 @@ namespace Web_Shop.Controllers
                     }
                 }
 
-                //for (int j = 0; j < Globals.Korisnici[i].OmiljeniProizvodi.Count; j++)
-                //{
-                //    if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Contains(naziv))
-                //    {
-                //        Globals.Korisnici[i].OmiljeniProizvodi.Remove(Globals.Korisnici[i].OmiljeniProizvodi[j]);
-                //    }
-                //}
+                for (int j = 0; j < Globals.Korisnici[i].OmiljeniProizvodi.Count; j++)
+                {
+                    if (Globals.Korisnici[i].OmiljeniProizvodi[j].Naziv.Equals(naziv))
+                    {
+                        Globals.Korisnici[i].OmiljeniProizvodi[j].Kolicina = 0;
+                        Globals.Korisnici[i].OmiljeniProizvodi[j].Dostupan = "Ne";
+                    }
+                }
             }
 
             file.SerializeObject<List<Proizvod>>(Proizvodi.ListaProizvoda, "Proizvodi.xml");
@@ -944,7 +945,7 @@ namespace Web_Shop.Controllers
                 {
                     for (int j = 0; j < k.Porudzbine.Count; j++)
                     {
-                        if (k.Porudzbine[j].Status == Statusi.OTKAZAN)
+                        if (k.Porudzbine[j].Status == Statusi.OTKAZAN && k.Porudzbine[j].Proizvod.Naziv.Equals(naziv))
                         {
                             return BadRequest("Nemate pravo da izmenite status !!");
                         }
